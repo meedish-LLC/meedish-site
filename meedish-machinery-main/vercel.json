@@ -1,0 +1,21 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/config.js", "use": "@vercel/node" },
+    { "src": "*.html", "use": "@vercel/static" },
+    { "src": "js/**", "use": "@vercel/static" },
+    { "src": "logo/**", "use": "@vercel/static" },
+    { "src": "*.js", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/config", "dest": "/api/config.js" },
+    { "src": "/admin.html", "dest": "/admin.html" },
+    { "src": "/signup.html", "dest": "/signup.html" },
+    { "src": "/super_admin_dashboard.html", "dest": "/super_admin_dashboard.html" },
+    { "src": "/js/(.*)", "dest": "/js/$1" },
+    { "src": "/logo/(.*)", "dest": "/logo/$1" },
+    { "src": "/booking_wishlist_functions.js", "dest": "/booking_wishlist_functions.js" },
+    { "src": "/inquiry_functions.js", "dest": "/inquiry_functions.js" },
+    { "src": "/", "dest": "/index.html" }
+  ]
+}

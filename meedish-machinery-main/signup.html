@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Partner Signup | meedish Machinery</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;700&family=Inter:wght@400;500&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+    <script src="js/config.js"></script>
+    <script src="js/config-loader.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Initialize Supabase client once DOM is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                await initSupabaseClient();
+            } catch (err) {
+                console.error('Failed to init supabase on signup page', err);
+            }
+        });
+
+        // Tailwind config
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'industrial': {
+                            'yellow': '#FFB347',
+                            'orange': '#FF8C00',
+                            'gray': '#2D3748',
+                            'blue': '#4299E1',
+                            'dark': '#1A202C'
+                        }
+                    }
+                }
+            }
+        }
+
+        // Translations
+        const signupTranslations = {
+            en: {
+                title: "Partner Registration",
+                subtitle: "Apply to join our machinery provider network",
+                full_name: "Full Name *",
+                email: "Email Address *",
+                company: "Company Name *",
+                password: "Password *",
+                password_hint: "Minimum 6 characters",
+                submit: "Submit Application",
+                existing_account: "Already have an account?",
+                login_link: "Login here",
+                success_title: "Application Submitted!",
+                success_message: "Your partner application is pending approval from the Super Admin. You will be able to login once approved.",
+                go_to_login: "Go to Login"
+            },
+            am: {
+                title: "የግብይት አጋር ምዝገባ",
+                subtitle: "በማሽነሪ አቅራቢዎች አውታረ መረባችን ለመቀላቀል ያመልክቱ",
+                full_name: "ሙሉ ስም *",
+                email: "የኢሜል አድራሻ *",
+                company: "የኩባንያ ስም *",
+                password: "የይለፍ ቃል *",
+                password_hint: "ቢያንስ 6 ቁምፊዎች",
+                submit: "አመልካችነት ያስገቡ",
+                existing_account: "ቀድሞውኑ መለያ አለዎት?",
+                login_link: "እዚህ ይግቡ",
+                success_title: "አመልካችነት ቀርቧል!",
+                success_message: "የእርስዎ የግብይት አጋር ማመልከቻ ከሱፐር አስተዳዳሪ ፍቃድ በመጠባበቅ ላይ ነው። እንዲፈቀድልዎት ከተደረገ በኋላ መግባት ይችላሉ።",
+                go_to_login: "ወደ መግቢያ ይሂዱ"
+            }
+        };
+
+        let currentLanguage = localStorage.getItem('signup_lang') || 'en';
+    </script>
+
+    <style>
+        body[data-lang="am"] {
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+        }
+
+        /* ── Unified Language Switcher ── */
+        .lang-switcher {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            z-index: 100;
+        }
+
+        .lang-pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+        }
+
+        .lang-pill-btn:hover {
+            border-color: #FFB347;
+            background: #fffbeb;
+        }
+
+        .lang-pill-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
+            min-width: 150px;
+            overflow: hidden;
+            display: none;
+            animation: fadeSlideDown .18s ease-out;
+            z-index: 200;
+        }
+
+        .lang-pill-dropdown.show {
+            display: block;
+        }
+
+        .lang-pill-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: background .15s;
+        }
+
+        .lang-pill-option:hover {
+            background: #f9fafb;
+        }
+
+        .lang-pill-option.active {
+            background: #fffbeb;
+            color: #d97706;
+            font-weight: 700;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4" data-lang="en">
+
+    <!-- Language Switcher -->
+    <div class="lang-switcher" id="signupLangSwitcher">
+        <button class="lang-pill-btn" onclick="toggleSignupLangDropdown()" id="signupLangBtn">
+            <span id="signupLangFlag">🇺🇸</span>
+            <span id="signupLangLabel">EN</span>
+            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7" />
+            </svg>
+        </button>
+        <div class="lang-pill-dropdown" id="signupLangDropdown">
+            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="signupOptEn">
+                <span>🇺🇸</span> English
+            </div>
+            <div class="lang-pill-option" onclick="switchLanguage('am')" id="signupOptAm">
+                <span>🇪🇹</span> አማርኛ
+            </div>
+        </div>
+    </div>
+
+    <div class="bg-white p-8 rounded-3xl shadow-2xl w-full max-w-md border border-gray-100 relative overflow-hidden">
+        <!-- Top accent bar -->
+        <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-industrial-yellow to-orange-500"></div>
+
+        <div class="text-center mb-8">
+            <div
+                class="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-industrial-yellow/10 text-industrial-yellow mb-4">
+                <i class="fas fa-hard-hat text-3xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-gray-900 mb-1 translate-content" data-i18n="title">Partner <span
+                    class="text-industrial-yellow">Registration</span></h1>
+            <p class="text-gray-500 text-sm translate-content" data-i18n="subtitle">Apply to join our machinery provider
+                network</p>
+        </div>
+
+        <form id="signupForm" onsubmit="handleSignup(event)" class="space-y-4">
+            <div>
+                <label class="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wider translate-content"
+                    data-i18n="full_name">Full Name *</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400"><i
+                            class="fas fa-user"></i></span>
+                    <input type="text" id="name" required
+                        class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wider translate-content"
+                    data-i18n="email">Email Address *</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400"><i
+                            class="fas fa-envelope"></i></span>
+                    <input type="email" id="email" required
+                        class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wider translate-content"
+                    data-i18n="company">Company Name *</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400"><i
+                            class="fas fa-building"></i></span>
+                    <input type="text" id="company"
+                        class="w-full pl-11 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all">
+                </div>
+            </div>
+
+            <div>
+                <label class="block text-gray-700 text-xs font-bold mb-1.5 uppercase tracking-wider translate-content"
+                    data-i18n="password">Password *</label>
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-4 flex items-center text-gray-400"><i
+                            class="fas fa-lock"></i></span>
+                    <input type="password" id="password" required minlength="6"
+                        class="w-full pl-11 pr-12 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all">
+                    <button type="button" onclick="toggleSignupPassword()"
+                        class="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors">
+                        <i id="signupEyeIcon" class="fas fa-eye"></i>
+                    </button>
+                </div>
+                <p class="text-xs text-gray-400 mt-1 ml-1 translate-content" data-i18n="password_hint">Minimum 6
+                    characters</p>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-industrial-yellow hover:bg-industrial-orange text-gray-900 font-bold py-3.5 rounded-xl shadow-md hover:-translate-y-0.5 transition-all duration-200 flex items-center justify-center gap-2 mt-2">
+                <i class="fas fa-paper-plane"></i>
+                <span class="translate-content" data-i18n="submit">Submit Application</span>
+            </button>
+        </form>
+
+        <div class="mt-6 text-center border-t border-gray-100 pt-5 space-y-2">
+            <p class="text-sm text-gray-500">
+                <span class="translate-content" data-i18n="existing_account">Already have an account?</span>
+                <a href="admin.html"
+                    class="text-industrial-yellow hover:text-industrial-orange font-bold ml-1 translate-content"
+                    data-i18n="login_link">Login here</a>
+            </p>
+            <a href="index.html"
+                class="text-xs text-gray-400 hover:text-industrial-orange transition-colors inline-flex items-center gap-1">
+                <i class="fas fa-arrow-left text-xs"></i>
+                <span class="translate-content" data-i18n="back_to_home">Back to home</span>
+            </a>
+        </div>
+    </div>
+
+
+    <!-- Success Modal -->
+    <div id="successModal" class="hidden fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-2xl max-w-sm text-center transform scale-100 transition-transform">
+            <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-check text-3xl text-green-500"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2 translate-content" data-i18n="success_title">Application
+                Submitted!</h3>
+            <p class="text-gray-600 mb-6 translate-content" data-i18n="success_message">
+                Your partner application is pending approval from the Super Admin.
+                You will be able to login once approved.
+            </p>
+            <a href="admin.html"
+                class="inline-block px-6 py-2.5 bg-industrial-gray text-white rounded-lg font-bold hover:bg-gray-900 transition">
+                <span class="translate-content" data-i18n="go_to_login">Go to Login</span>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // ── Language Dropdown ──
+        function toggleSignupLangDropdown() {
+            document.getElementById('signupLangDropdown').classList.toggle('show');
+        }
+        document.addEventListener('click', e => {
+            if (!e.target.closest('#signupLangSwitcher')) {
+                document.getElementById('signupLangDropdown')?.classList.remove('show');
+            }
+        });
+        function updateLangButtons(lang) {
+            const flag = lang === 'en' ? '🇺🇸' : '🇪🇹';
+            const label = lang === 'en' ? 'EN' : 'አማ';
+            document.getElementById('signupLangFlag').textContent = flag;
+            document.getElementById('signupLangLabel').textContent = label;
+            document.getElementById('signupOptEn').classList.toggle('active', lang === 'en');
+            document.getElementById('signupOptAm').classList.toggle('active', lang === 'am');
+            document.getElementById('signupLangDropdown').classList.remove('show');
+        }
+
+        // Show/hide password
+        function toggleSignupPassword() {
+            const input = document.getElementById('password');
+            const icon = document.getElementById('signupEyeIcon');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        }
+
+        // Language management
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('signup_lang', lang);
+            document.body.setAttribute('data-lang', lang);
+            applyTranslations(lang);
+            updateLangButtons(lang);
+        }
+
+        function applyTranslations(lang) {
+            const translations = signupTranslations[lang] || signupTranslations.en;
+
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[key]) {
+                    if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+                        el.placeholder = translations[key];
+                    } else {
+                        el.textContent = translations[key];
+                    }
+                }
+            });
+        }
+
+        function updateLangButtons(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.querySelector(`.lang-btn[onclick*="${lang}"]`).classList.add('active');
+        }
+
+        // Apply initial language
+        switchLanguage(currentLanguage);
+
+        async function handleSignup(event) {
+            event.preventDefault();
+
+            const name = document.getElementById("name").value.trim();
+            const email = document.getElementById("email").value.trim().toLowerCase();
+            const company = document.getElementById("company").value.trim();
+            const password = document.getElementById("password").value;
+
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Submitting...';
+            submitBtn.disabled = true;
+
+            try {
+                const supabase = window.supabase;
+
+                const { data: existingUser, error: existingError } = await supabase
+                    .from('users')
+                    .select('id')
+                    .eq('email', email)
+                    .maybeSingle();
+
+                if (existingError) throw existingError;
+                if (existingUser) throw new Error('An account with this email already exists.');
+
+                // Register using the same custom users-table password flow used by admin.html.
+                const { error: profileError } = await supabase
+                    .from('users')
+                    .insert([{
+                        email: email,
+                        password: password,
+                        full_name: name,
+                        company_name: company,
+                        role: 'partner',
+                        status: 'pending',
+                        created_at: new Date().toISOString()
+                    }])
+                    .select();
+
+                if (profileError) throw profileError;
+
+                // 3. Show success modal
+                document.getElementById("successModal").classList.remove("hidden");
+                document.getElementById("signupForm").reset();
+
+            } catch (error) {
+                console.error('Signup error:', error);
+                alert(error.message || 'Registration failed. Please try again.');
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+    </script>
+</body>
+
+</html>

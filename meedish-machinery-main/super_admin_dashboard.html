@@ -1,0 +1,3039 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Dashboard | meedish Machinery</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Exo+2:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Ethiopic:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Supabase -->
+    <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Leaflet for Maps -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="js/config-loader.js"></script>
+    <script src="js/supabase-client.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script>
+        // Tailwind config
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        'heading': ['Exo 2', 'sans-serif'],
+                        'body': ['Inter', 'sans-serif'],
+                        'amharic': ['Noto Sans Ethiopic', 'serif'],
+                    },
+                    colors: {
+                        'industrial': {
+                            'yellow': '#FFB347',
+                            'orange': '#FF8C00',
+                            'gray': '#2D3748',
+                            'blue': '#4299E1',
+                            'safety': '#FF6B35',
+                            'green': '#10B981',
+                            'dark': '#1A202C',
+                            'light-gray': '#F7FAFC'
+                        }
+                    },
+                    boxShadow: {
+                        'card': '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'card-hover': '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+                        'heavy': '0 10px 25px -5px rgba(0, 0, 0, 0.15)',
+                    },
+                    animation: {
+                        'fade-in': 'fadeIn 0.5s ease-in-out',
+                        'slide-up': 'slideUp 0.3s ease-out',
+                        'pulse-border': 'pulse-border 2s infinite',
+                    },
+                    keyframes: {
+                        fadeIn: {
+                            '0%': { opacity: '0' },
+                            '100%': { opacity: '1' },
+                        },
+                        slideUp: {
+                            '0%': { transform: 'translateY(10px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        'pulse-border': {
+                            '0%': { boxShadow: '0 0 0 0 rgba(255, 179, 71, 0.7)' },
+                            '70%': { boxShadow: '0 0 0 10px rgba(255, 179, 71, 0)' },
+                            '100%': { boxShadow: '0 0 0 0 rgba(255, 179, 71, 0)' },
+                        }
+                    }
+                }
+            }
+        }
+
+        // Initialize Supabase after fetching config
+        async function initSupabase() {
+            try {
+                await initSupabaseClient();
+                console.log('Super Admin Supabase initialized successfully');
+
+                // Show loading screen
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) loadingScreen.classList.remove('hidden');
+
+                // Check if user is logged in as super admin
+                if (typeof checkSuperAdminAuth === 'function') await checkSuperAdminAuth();
+
+                // Hide loading screen
+                if (loadingScreen) loadingScreen.classList.add('hidden');
+
+            } catch (error) {
+                console.error('Supabase initialization failed:', error);
+                alert('System Error: Failed to load configuration.');
+            }
+        }
+
+        // Run initialization
+        document.addEventListener('DOMContentLoaded', initSupabase);
+
+        // Translations
+        const superAdminTranslations = {
+            en: {
+                dashboard_title: "Super Admin Dashboard",
+                dashboard_subtitle: "Full system oversight & management",
+                total_machines: "Total Machines",
+                active_orders: "Active Orders",
+                total_users: "Total Users",
+                monthly_revenue: "Monthly Revenue",
+                user_management: "User Management",
+                pending_approvals: "Pending Approvals",
+                live_locations: "Live Locations",
+                analytics: "Analytics",
+                search_users: "Search users...",
+                user_info: "User Info",
+                role: "Role",
+                status: "Status",
+                balance: "Balance",
+                location: "Location",
+                actions: "Actions",
+                applicant: "Applicant",
+                company: "Company",
+                email: "Email",
+                request_date: "Request Date",
+                approve: "Approve",
+                reject: "Reject",
+                refresh: "Refresh",
+                all_roles: "All Roles",
+                customer: "Customer",
+                partner: "Partner",
+                admin: "Admin",
+                active: "Active",
+                inactive: "Inactive",
+                banned: "Banned",
+                pending: "Pending",
+                view_details: "View Details",
+                edit_user: "Edit User",
+                delete_user: "Delete User",
+                rental_history: "Rental History",
+                add_user: "Add User",
+                full_name: "Full Name",
+                email_address: "Email Address",
+                detailed_location: "Detailed Location",
+                region: "Region",
+                cancel: "Cancel",
+                save_user: "Save User",
+                no_pending: "No pending approvals at this time",
+                system_analytics: "System Analytics",
+                performance_metrics: "Performance metrics and growth",
+                revenue_overview: "Revenue Overview",
+                user_growth: "User Growth",
+                equipment_status: "Equipment Status",
+                back_to_site: "Back to Site",
+                sign_out: "Sign Out",
+                menu: "Menu",
+                rental_machines: "Rental Machines",
+                sale_machines: "Sale Machines",
+                partner_accounts: "Partner Accounts",
+                pending_partners: "Pending Partners",
+                loading: "Loading..."
+            },
+            am: {
+                dashboard_title: "ሱፐር አስተዳዳሪ ዳሽቦርድ",
+                dashboard_subtitle: "ሙሉ ስርዓት ቁጥጥር እና አስተዳደር",
+                total_machines: "ጠቅላላ ማሽኖች",
+                active_orders: "ንቁ ትዕዛዞች",
+                total_users: "ጠቅላላ ተጠቃሚዎች",
+                monthly_revenue: "ወርሃዊ ገቢ",
+                user_management: "የተጠቃሚ አስተዳደር",
+                pending_approvals: "በመጠባበቅ ላይ ያሉ ፍቃዶች",
+                live_locations: "በቀጥታ ቦታዎች",
+                analytics: "ትንታኔዎች",
+                search_users: "ተጠቃሚዎችን ፈልግ...",
+                user_info: "የተጠቃሚ መረጃ",
+                role: "ተግባር",
+                status: "ሁኔታ",
+                balance: "ሒሳብ",
+                location: "ቦታ",
+                actions: "ተግባሮች",
+                applicant: "ማመልከቻ",
+                company: "ኩባንያ",
+                email: "ኢሜል",
+                request_date: "የጠየቀበት ቀን",
+                approve: "አጽድቅ",
+                reject: "አሰናክል",
+                refresh: "አድስ",
+                all_roles: "ሁሉም ተግባራት",
+                customer: "ደንበኛ",
+                partner: "አጋር",
+                admin: "አስተዳዳሪ",
+                active: "ንቃተ ህሊና",
+                inactive: "ንቃተ ህሊና የለውም",
+                banned: "ታግዷል",
+                pending: "በመጠባበቅ ላይ",
+                view_details: "ዝርዝሮችን ይመልከቱ",
+                edit_user: "ተጠቃሚን ያርትዑ",
+                delete_user: "ተጠቃሚን ይሰርዙ",
+                rental_history: "የኪራይ ታሪክ",
+                add_user: "ተጠቃሚ ያክሉ",
+                full_name: "ሙሉ ስም",
+                email_address: "የኢሜል አድራሻ",
+                detailed_location: "ዝርዝር ቦታ",
+                region: "ክልል",
+                cancel: "ሰርዝ",
+                save_user: "ተጠቃሚን አስቀምጥ",
+                no_pending: "በዚህ ጊዜ ምንም በመጠባበቅ ላይ ያሉ ፍቃዶች የሉም",
+                system_analytics: "የስርዓት ትንታኔዎች",
+                performance_metrics: "አፈፃፀም መለኪያዎች እና እድገት",
+                revenue_overview: "የገቢ አጠቃላይ እይታ",
+                user_growth: "የተጠቃሚ እድገት",
+                equipment_status: "የመሣሪያ ሁኔታ",
+                back_to_site: "ወደ ጣቢያ ተመለስ",
+                sign_out: "ይውጡ",
+                menu: "ምናሌ",
+                rental_machines: "የኪራይ ማሽኖች",
+                sale_machines: "የመሸጫ ማሽኖች",
+                partner_accounts: "የአጋር መለያዎች",
+                pending_partners: "በመጠባበቅ ላይ ያሉ አጋሮች",
+                loading: "በመጫን ላይ..."
+            }
+        };
+    </script>
+
+    <style>
+        /* Custom styles */
+        body[data-lang="am"] {
+            font-family: 'Noto Sans Ethiopic', 'Inter', sans-serif;
+        }
+
+        .safety-stripes {
+            background: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 107, 53, 0.05) 10px, rgba(255, 107, 53, 0.05) 20px);
+        }
+
+        .modal-overlay {
+            cursor: pointer;
+        }
+
+        .modal-content {
+            cursor: auto;
+        }
+
+        #map {
+            height: 500px;
+            width: 100%;
+            z-index: 1;
+            border-radius: 12px;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #FFB347;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #FF8C00;
+        }
+
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #FFB347;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
+        }
+
+        /* ── Unified Language Switcher (Pill Dropdown) ── */
+        .admin-lang-switcher {
+            position: relative;
+            display: inline-block;
+        }
+
+        .lang-pill-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 999px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            transition: all 0.2s;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+        }
+
+        .lang-pill-btn:hover {
+            border-color: #FFB347;
+            background: #fffbeb;
+        }
+
+        .lang-pill-dropdown {
+            position: absolute;
+            top: calc(100% + 8px);
+            right: 0;
+            background: white;
+            border: 1.5px solid #e5e7eb;
+            border-radius: 14px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
+            min-width: 150px;
+            overflow: hidden;
+            display: none;
+            animation: fadeSlideDown .18s ease-out;
+            z-index: 200;
+        }
+
+        .lang-pill-dropdown.show {
+            display: block;
+        }
+
+        .lang-pill-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            cursor: pointer;
+            font-size: 14px;
+            color: #374151;
+            transition: background .15s;
+        }
+
+        .lang-pill-option:hover {
+            background: #f9fafb;
+        }
+
+        .lang-pill-option.active {
+            background: #fffbeb;
+            color: #d97706;
+            font-weight: 700;
+        }
+
+        @keyframes fadeSlideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-6px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .badge {
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-active {
+            background-color: #10B981;
+            color: white;
+        }
+
+        .badge-pending {
+            background-color: #F59E0B;
+            color: white;
+        }
+
+        .badge-inactive {
+            background-color: #6B7280;
+            color: white;
+        }
+
+        .badge-banned {
+            background-color: #EF4444;
+            color: white;
+        }
+
+        .badge-partner {
+            background-color: #8B5CF6;
+            color: white;
+        }
+
+        .badge-admin {
+            background-color: #3B82F6;
+            color: white;
+        }
+
+        .badge-customer {
+            background-color: #10B981;
+            color: white;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-industrial-gray safety-stripes h-screen flex overflow-hidden" data-lang="en">
+
+    <!-- Admin Content Wrapper -->
+    <div id="adminContent" class="hidden flex w-full h-full">
+
+        <!-- Sidebar -->
+        <aside class="hidden lg:flex w-72 bg-slate-900 text-white flex-col flex-shrink-0 z-20 shadow-2xl relative">
+            <div class="h-20 flex items-center px-8 border-b border-slate-800 bg-slate-900">
+                <a href="index.html" title="Back to Home">
+                    <img src="logo/gearIcon.png" alt="Meedish Machinery Logo"
+                        class="w-40 h-13 rounded-lg object-cover" />
+                </a>
+            </div>
+
+            <!-- Admin Profile -->
+            <div class="p-6 border-b border-slate-800 bg-slate-800/50">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <div
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-industrial-yellow to-orange-500 flex items-center justify-center text-white font-bold text-lg shadow-lg">
+                            <span>SA</span>
+                        </div>
+                        <div
+                            class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 border-2 border-slate-800 rounded-full">
+                        </div>
+                    </div>
+                    <div class="overflow-hidden">
+                        <p class="font-bold text-sm truncate text-white">Super Admin</p>
+                        <p class="text-xs text-slate-400 truncate">System Owner</p>
+                    </div>
+                </div>
+            </div>
+
+            <nav class="flex-1 overflow-y-auto py-6 px-4 space-y-1.5">
+                <p class="px-4 text-xs font-bold text-slate-500 uppercase tracking-widest mb-2 translate-content"
+                    data-i18n="menu">Menu</p>
+                <button onclick="showSection('dashboard')" id="section-dashboard"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group bg-industrial-yellow text-industrial-gray shadow-lg ring-1 ring-white/10">
+                    <i class="fas fa-chart-pie w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-bold translate-content" data-i18n="dashboard_title">Dashboard</span>
+                </button>
+                <button onclick="showSection('users')" id="section-users"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i class="fas fa-users w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-semibold translate-content" data-i18n="user_management">User Management</span>
+                </button>
+                <button onclick="showSection('pending')" id="section-pending"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i class="fas fa-user-clock w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-semibold translate-content" data-i18n="pending_approvals">Pending Approvals</span>
+                    <span id="pendingBadge"
+                        class="ml-auto bg-industrial-yellow text-industrial-dark text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+                </button>
+                <button onclick="showSection('map')" id="section-map"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i class="fas fa-map-marked-alt w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-semibold translate-content" data-i18n="live_locations">Live Locations</span>
+                </button>
+                <button onclick="showSection('analytics')" id="section-analytics"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i class="fas fa-chart-line w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-semibold translate-content" data-i18n="analytics">Analytics</span>
+                </button>
+                <button onclick="showSection('sa-settings')" id="section-sa-settings"
+                    class="w-full text-left px-5 py-3.5 rounded-xl flex items-center transition-all group text-slate-400 hover:bg-slate-800 hover:text-white">
+                    <i class="fas fa-cog w-6 mr-3 text-lg group-hover:scale-110 transition-transform"></i>
+                    <span class="font-semibold">Settings</span>
+                </button>
+            </nav>
+
+            <div class="p-4 border-t border-slate-800">
+                <a href="index.html" target="_blank"
+                    class="w-full mb-3 py-3.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-all font-bold flex items-center justify-center group border border-slate-700">
+                    <i class="fas fa-external-link-alt mr-2"></i> <span class="translate-content"
+                        data-i18n="back_to_site">Back to Site</span>
+                </a>
+                <button onclick="superAdminLogout()"
+                    class="w-full py-3.5 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all font-bold flex items-center justify-center group border border-red-500/20">
+                    <i class="fas fa-power-off mr-2 group-hover:rotate-90 transition-transform"></i> <span
+                        class="translate-content" data-i18n="sign_out">Sign Out</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Mobile Sidebar Overlay -->
+        <div id="mobileSidebar" class="lg:hidden fixed inset-0 z-50 hidden">
+            <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+            <div
+                class="absolute left-0 top-0 h-full w-72 bg-slate-900 text-white shadow-2xl flex flex-col border-r border-slate-800">
+                <div class="h-20 flex items-center px-6 border-b border-slate-800">
+                    <a href="index.html" title="Back to Home">
+                        <img src="logo/gearIcon.png" alt="Meedish Machinery Logo"
+                            class="w-32 h-13 rounded-lg object-cover" />
+                    </a>
+                    <button onclick="toggleMobileMenu()"
+                        class="ml-auto w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white"><i
+                            class="fas fa-times"></i></button>
+                </div>
+                <nav class="flex-1 py-6 px-4 space-y-2">
+                    <button onclick="showSection('dashboard'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-chart-pie mr-3 w-5"></i> <span class="translate-content"
+                            data-i18n="dashboard_title">Dashboard</span>
+                    </button>
+                    <button onclick="showSection('users'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-users mr-3 w-5"></i> <span class="translate-content"
+                            data-i18n="user_management">User Management</span>
+                    </button>
+                    <button onclick="showSection('pending'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-user-clock mr-3 w-5"></i> <span class="translate-content"
+                            data-i18n="pending_approvals">Pending Approvals</span>
+                        <span id="mobilePendingBadge"
+                            class="ml-auto bg-industrial-yellow text-industrial-dark text-xs font-bold px-2 py-1 rounded-full hidden">0</span>
+                    </button>
+                    <button onclick="showSection('map'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-map-marked-alt mr-3 w-5"></i> <span class="translate-content"
+                            data-i18n="live_locations">Live Locations</span>
+                    </button>
+                    <button onclick="showSection('analytics'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-chart-line mr-3 w-5"></i> <span class="translate-content"
+                            data-i18n="analytics">Analytics</span>
+                    </button>
+                    <button onclick="showSection('sa-settings'); toggleMobileMenu()"
+                        class="w-full text-left px-5 py-3 rounded-xl flex items-center text-slate-200 hover:bg-slate-800 font-bold">
+                        <i class="fas fa-cog mr-3 w-5"></i> <span>Settings</span>
+                    </button>
+                </nav>
+                <div class="p-4 mt-auto border-t border-slate-800 space-y-2">
+                    <a href="index.html" target="_blank"
+                        class="w-full py-3 text-slate-400 hover:text-white font-bold flex items-center justify-center">
+                        <i class="fas fa-external-link-alt mr-2"></i> <span class="translate-content"
+                            data-i18n="back_to_site">Back to Site</span>
+                    </a>
+                    <button onclick="superAdminLogout()" class="w-full py-3 text-red-400 font-bold">
+                        <i class="fas fa-sign-out-alt mr-2"></i> <span class="translate-content"
+                            data-i18n="sign_out">Log Out</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col h-full overflow-hidden bg-gray-50 relative">
+
+            <!-- Mobile Header -->
+            <header
+                class="lg:hidden h-16 bg-white border-b border-gray-100 flex items-center justify-between px-4 z-10 shadow-sm flex-shrink-0">
+                <div class="flex items-center">
+                    <button id="mobileMenuBtn" onclick="toggleMobileMenu()"
+                        class="p-2 -ml-2 text-gray-600 hover:bg-gray-50 rounded-lg transition-colors"><i
+                            class="fas fa-bars text-xl"></i></button>
+                    <span class="font-heading font-bold text-lg text-gray-800 ml-2 translate-content"
+                        data-i18n="dashboard_title">Super Admin</span>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <!-- Mobile Language Switcher -->
+                    <div class="admin-lang-switcher" id="saMobileLangSwitcher">
+                        <button class="lang-pill-btn" onclick="toggleSALangDropdown('saMobileLangDD')">
+                            <span id="saMobileFlag">🇺🇸</span>
+                            <span id="saMobileLabel">EN</span>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="lang-pill-dropdown" id="saMobileLangDD">
+                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saMobileOptEn">
+                                <span>🇺🇸</span> English</div>
+                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saMobileOptAm">
+                                <span>🇪🇹</span> አማርኛ</div>
+                        </div>
+                    </div>
+
+                    <div
+                        class="w-9 h-9 rounded-full bg-industrial-yellow text-white flex items-center justify-center font-bold text-sm shadow-md">
+                        <span>SA</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Desktop Header -->
+            <header
+                class="hidden lg:flex h-20 bg-white/80 backdrop-blur-md border-b border-gray-100 items-center justify-between px-8 z-10 sticky top-0 flex-shrink-0">
+                <div class="flex items-center space-x-4">
+                    <h2 id="sectionTitle"
+                        class="text-2xl font-bold font-heading text-gray-800 tracking-tight translate-content"
+                        data-i18n="dashboard_title">Dashboard</h2>
+                    <p id="sectionSubtitle" class="text-gray-500 hidden lg:block translate-content"
+                        data-i18n="dashboard_subtitle">Full system oversight & management</p>
+                </div>
+
+                <div class="flex items-center space-x-6">
+                    <!-- Language Switcher -->
+                    <div class="admin-lang-switcher" id="saDesktopLangSwitcher">
+                        <button class="lang-pill-btn" onclick="toggleSALangDropdown('saDesktopLangDD')">
+                            <span id="saDesktopFlag">🇺🇸</span>
+                            <span id="saDesktopLabel">EN</span>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
+                                    d="M19 9l-7 7-7-7" />
+                            </svg>
+                        </button>
+                        <div class="lang-pill-dropdown" id="saDesktopLangDD">
+                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saDesktopOptEn">
+                                <span>🇺🇸</span> English</div>
+                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saDesktopOptAm">
+                                <span>🇪🇹</span> አማርኛ</div>
+                        </div>
+                    </div>
+
+                    <div class="relative">
+                        <span id="headerPendingBadge"
+                            class="absolute top-0 right-0 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white hidden"></span>
+                        <button onclick="showSection('pending')"
+                            class="text-gray-400 hover:text-industrial-yellow transition-colors"><i
+                                class="fas fa-bell text-xl"></i></button>
+                    </div>
+                    <div class="h-8 w-px bg-gray-200/50"></div>
+                    <a href="index.html" target="_blank"
+                        class="flex items-center px-4 py-2 rounded-lg bg-gray-50 hover:bg-gray-100 text-gray-600 font-bold text-sm transition-all border border-gray-100">
+                        <i class="fas fa-external-link-alt mr-2"></i> <span class="translate-content"
+                            data-i18n="view_site">View Site</span>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="flex-1 overflow-y-auto p-4 md:p-8 scroll-smooth">
+
+                <!-- Dashboard Section -->
+                <section id="dashboard-section" class="space-y-6 animate-fade-in">
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <!-- Total Machines -->
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden">
+                            <div
+                                class="absolute right-0 top-0 w-32 h-32 bg-industrial-yellow/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest translate-content"
+                                        data-i18n="total_machines">Total Machines</p>
+                                    <h3 id="stat-total-machines"
+                                        class="text-3xl font-heading font-black text-gray-900 mt-2">0</h3>
+                                </div>
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow text-xl shadow-sm">
+                                    <i class="fas fa-truck-monster"></i>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex items-center text-xs font-bold relative z-10">
+                                <span class="text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100">
+                                    <i class="fas fa-rental mr-1"></i> <span id="rental-machines">0</span> <span
+                                        class="translate-content" data-i18n="rental_machines">Rental</span>
+                                </span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-blue-600 bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">
+                                    <i class="fas fa-sale mr-1"></i> <span id="sale-machines">0</span> <span
+                                        class="translate-content" data-i18n="sale_machines">Sale</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Active Orders -->
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden">
+                            <div
+                                class="absolute right-0 top-0 w-32 h-32 bg-blue-500/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest translate-content"
+                                        data-i18n="active_orders">Active Orders</p>
+                                    <h3 id="stat-active-orders"
+                                        class="text-3xl font-heading font-black text-gray-900 mt-2">0</h3>
+                                </div>
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-blue-500/10 flex items-center justify-center text-blue-500 text-xl shadow-sm">
+                                    <i class="fas fa-clipboard-list"></i>
+                                </div>
+                            </div>
+                            <div class="mt-6 text-sm font-bold text-blue-500 relative z-10 flex items-center">
+                                <i class="fas fa-arrow-up mr-2 text-xs"></i> +15% from last week
+                            </div>
+                        </div>
+
+                        <!-- Total Users -->
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden">
+                            <div
+                                class="absolute right-0 top-0 w-32 h-32 bg-green-500/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest translate-content"
+                                        data-i18n="total_users">Total Users</p>
+                                    <h3 id="stat-total-users"
+                                        class="text-3xl font-heading font-black text-gray-900 mt-2">0</h3>
+                                </div>
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-green-500/10 flex items-center justify-center text-green-500 text-xl shadow-sm">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                            </div>
+                            <div class="mt-6 flex items-center text-xs font-bold relative z-10">
+                                <span
+                                    class="text-purple-600 bg-purple-50 px-2.5 py-1 rounded-lg border border-purple-100">
+                                    <i class="fas fa-user-tie mr-1"></i> <span id="partner-users">0</span> <span
+                                        class="translate-content" data-i18n="partner">Partners</span>
+                                </span>
+                                <span class="mx-2 text-gray-300">|</span>
+                                <span class="text-green-600 bg-green-50 px-2.5 py-1 rounded-lg border border-green-100">
+                                    <i class="fas fa-user mr-1"></i> <span id="customer-users">0</span> <span
+                                        class="translate-content" data-i18n="customer">Customers</span>
+                                </span>
+                            </div>
+                        </div>
+
+                        <!-- Revenue -->
+                        <div
+                            class="bg-white p-6 rounded-3xl shadow-sm border border-gray-100 hover:shadow-lg hover:-translate-y-1 transition-all group relative overflow-hidden">
+                            <div
+                                class="absolute right-0 top-0 w-32 h-32 bg-purple-500/5 rounded-bl-full -mr-10 -mt-10 transition-transform group-hover:scale-110">
+                            </div>
+                            <div class="flex justify-between items-start relative z-10">
+                                <div>
+                                    <p class="text-xs font-bold text-gray-400 uppercase tracking-widest translate-content"
+                                        data-i18n="monthly_revenue">Monthly Revenue</p>
+                                    <h3 id="stat-monthly-revenue"
+                                        class="text-3xl font-heading font-black text-gray-900 mt-2">ETB --</h3>
+                                </div>
+                                <div
+                                    class="w-12 h-12 rounded-2xl bg-purple-500/10 flex items-center justify-center text-purple-500 text-xl shadow-sm">
+                                    <i class="fas fa-chart-line"></i>
+                                </div>
+                            </div>
+                            <div class="mt-6 text-sm font-bold text-purple-500 relative z-10 flex items-center">
+                                <i class="fas fa-arrow-up mr-2 text-xs"></i> +32% vs Last Month
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <!-- Recent Activity -->
+                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center text-gray-500">
+                                        <i class="fas fa-history"></i>
+                                    </div>
+                                    <h3 class="font-heading text-xl font-bold text-gray-900">Recent System Activity</h3>
+                                </div>
+                            </div>
+                            <div id="recentActivity" class="space-y-4">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+
+                        <!-- Pending Approvals Preview -->
+                        <div class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
+                            <div class="flex items-center justify-between mb-8">
+                                <div class="flex items-center space-x-4">
+                                    <div
+                                        class="w-10 h-10 rounded-xl bg-orange-100 flex items-center justify-center text-orange-500">
+                                        <i class="fas fa-user-clock"></i>
+                                    </div>
+                                    <h3 class="font-heading text-xl font-bold text-gray-900 translate-content"
+                                        data-i18n="pending_approvals">Pending Approvals</h3>
+                                </div>
+                                <button onclick="showSection('pending')"
+                                    class="text-industrial-blue hover:text-blue-600 font-medium">
+                                    View All →
+                                </button>
+                            </div>
+                            <div id="pendingPreview" class="space-y-4">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- User Management Section -->
+                <section id="users-section" class="hidden space-y-6 animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-3xl font-heading font-bold text-industrial-gray translate-content"
+                                data-i18n="user_management">User Management</h2>
+                            <p class="text-gray-500">Manage all registered users, renters, and partners.</p>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <div class="relative">
+                                <i
+                                    class="fas fa-search absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"></i>
+                                <input type="text" id="userListSearch" placeholder="Search users..."
+                                    data-i18n-placeholder="search_users"
+                                    class="pl-10 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 outline-none w-full md:w-64"
+                                    onkeyup="filterUsers()">
+                            </div>
+                            <select id="userRoleFilter" onchange="filterUsers()"
+                                class="border-2 border-gray-200 rounded-xl p-2.5 focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 outline-none bg-white">
+                                <option value="all" data-i18n="all_roles">All Roles</option>
+                                <option value="customer" data-i18n="customer">Customer</option>
+                                <option value="partner" data-i18n="partner">Partner</option>
+                                <option value="admin" data-i18n="admin">Admin</option>
+                            </select>
+                            <button onclick="openUserModal()"
+                                class="bg-industrial-yellow text-industrial-gray font-semibold py-2.5 px-4 rounded-xl shadow-md hover:bg-industrial-orange transition-all flex items-center whitespace-nowrap">
+                                <i class="fas fa-plus mr-2"></i>
+                                <span class="translate-content" data-i18n="add_user">Add User</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Users Table -->
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-industrial-gray text-white">
+                                    <tr class="text-left text-sm font-heading font-semibold uppercase tracking-wider">
+                                        <th class="p-4 translate-content" data-i18n="user_info">User Info</th>
+                                        <th class="p-4 translate-content" data-i18n="role">Role</th>
+                                        <th class="p-4 translate-content" data-i18n="status">Status</th>
+                                        <th class="p-4 translate-content" data-i18n="balance">Balance</th>
+                                        <th class="p-4 translate-content" data-i18n="location">Location</th>
+                                        <th class="p-4 text-center translate-content" data-i18n="actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="usersTableBody" class="bg-white divide-y divide-gray-200">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Loading State -->
+                        <div id="usersLoading" class="p-8 text-center">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-gray-500 translate-content" data-i18n="loading">Loading users...</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="usersEmpty" class="hidden p-8 text-center">
+                            <i class="fas fa-users text-gray-300 text-4xl mb-4"></i>
+                            <h3 class="text-xl font-heading font-bold text-gray-500">No users found</h3>
+                            <p class="text-gray-400 mt-2">Add your first user to get started</p>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pending Approvals Section -->
+                <section id="pending-section" class="hidden space-y-6 animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                        <div>
+                            <h2 class="text-3xl font-heading font-bold text-industrial-gray translate-content"
+                                data-i18n="pending_approvals">Pending Approvals</h2>
+                            <p class="text-gray-500">Review and approve new partner applications.</p>
+                        </div>
+                        <button onclick="refreshPending()"
+                            class="bg-industrial-blue text-white px-4 py-2 rounded-xl font-medium shadow hover:bg-blue-600 transition flex items-center">
+                            <i class="fas fa-sync-alt mr-2"></i> <span class="translate-content"
+                                data-i18n="refresh">Refresh</span>
+                        </button>
+                    </div>
+
+                    <div class="bg-white rounded-2xl shadow-card overflow-hidden border border-gray-100">
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead>
+                                    <tr class="bg-orange-50 text-orange-700 text-xs uppercase tracking-wider">
+                                        <th class="p-4 font-semibold translate-content" data-i18n="applicant">Applicant
+                                        </th>
+                                        <th class="p-4 font-semibold translate-content" data-i18n="company">Company</th>
+                                        <th class="p-4 font-semibold translate-content" data-i18n="email">Email</th>
+                                        <th class="p-4 font-semibold translate-content" data-i18n="request_date">Request
+                                            Date</th>
+                                        <th class="p-4 font-semibold text-right translate-content" data-i18n="actions">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingTableBody" class="divide-y divide-gray-100 text-sm">
+                                    <!-- Populated by JS -->
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div id="pendingLoading" class="p-8 text-center">
+                            <div class="loading-spinner mx-auto mb-4"></div>
+                            <p class="text-gray-500 translate-content" data-i18n="loading">Loading approvals...</p>
+                        </div>
+
+                        <!-- Empty State -->
+                        <div id="noPendingMsg" class="hidden p-8 text-center">
+                            <i class="fas fa-check-circle text-gray-300 text-4xl mb-4"></i>
+                            <h3 class="text-xl font-heading font-bold text-gray-500 translate-content"
+                                data-i18n="no_pending">No pending approvals at this time</h3>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Map Section -->
+                <section id="map-section" class="hidden space-y-6 animate-fade-in">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center">
+                        <div>
+                            <h2 class="text-3xl font-heading font-bold text-industrial-gray translate-content"
+                                data-i18n="live_locations">Live Locations</h2>
+                            <p class="text-gray-500">Real-time view of user locations and rental sites.</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-white p-4 rounded-2xl shadow-card border border-gray-100 h-full">
+                        <div id="map" class="rounded-xl overflow-hidden shadow-inner w-full"></div>
+                    </div>
+                </section>
+
+                <!-- Analytics Section -->
+                <section id="analytics-section" class="hidden space-y-6 animate-fade-in">
+                    <div>
+                        <h2 class="text-3xl font-heading font-bold text-industrial-gray translate-content"
+                            data-i18n="system_analytics">System Analytics</h2>
+                        <p class="text-gray-500 translate-content" data-i18n="performance_metrics">Performance metrics
+                            and growth.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+                            <h3 class="font-bold text-lg mb-4 text-industrial-gray translate-content"
+                                data-i18n="revenue_overview">Revenue Overview</h3>
+                            <canvas id="revenueChart"></canvas>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+                            <h3 class="font-bold text-lg mb-4 text-industrial-gray translate-content"
+                                data-i18n="user_growth">User Growth</h3>
+                            <canvas id="userGrowthChart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100">
+                            <h3 class="font-bold text-lg mb-4 text-industrial-gray translate-content"
+                                data-i18n="equipment_status">Equipment Status</h3>
+                            <canvas id="equipmentStatusChart"></canvas>
+                        </div>
+                        <div class="bg-white p-6 rounded-2xl shadow-card border border-gray-100 md:col-span-2">
+                            <h3 class="font-bold text-lg mb-4 text-industrial-gray">Recent Orders</h3>
+                            <div id="recentOrdersTable" class="overflow-x-auto">
+                                <!-- Populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="sa-settings-section" class="hidden space-y-6 animate-fade-in">
+                    <div class="mb-2">
+                        <h2 class="text-2xl md:text-3xl font-heading font-bold text-gray-900">Account Settings</h2>
+                        <p class="text-gray-500 mt-1">Change your super admin credentials</p>
+                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 max-w-4xl">
+
+                        <!-- Change Name -->
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow">
+                                    <i class="fas fa-user"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Display Name</h3>
+                                    <p class="text-xs text-gray-500">Update your admin name</p>
+                                </div>
+                            </div>
+                            <div id="sa-nameMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full
+                                        Name</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-user"></i></span>
+                                        <input type="text" id="sa-settings-name"
+                                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="Super Admin">
+                                    </div>
+                                </div>
+                                <button onclick="saUpdateName()"
+                                    class="w-full py-3 rounded-xl bg-industrial-yellow hover:bg-yellow-400 text-gray-900 font-bold transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-save"></i> Save Name
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Change Email -->
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
+                                    <i class="fas fa-envelope"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Change Email</h3>
+                                    <p class="text-xs text-gray-500">Update your login email</p>
+                                </div>
+                            </div>
+                            <div id="sa-emailMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
+                            <div class="space-y-4">
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
+                                        Email</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-envelope"></i></span>
+                                        <input type="email" id="sa-settings-email"
+                                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="new@email.com">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
+                                        Password (confirm)</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-email-pass"
+                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-email-pass','saEyeEmail')"
+                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
+                                                id="saEyeEmail" class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <button onclick="saChangeEmail()"
+                                    class="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2">
+                                    <i class="fas fa-envelope"></i> Update Email
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Change Password -->
+                        <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
+                            <div class="flex items-center gap-3 mb-6">
+                                <div
+                                    class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
+                                    <i class="fas fa-key"></i></div>
+                                <div>
+                                    <h3 class="font-bold text-gray-900">Change Password</h3>
+                                    <p class="text-xs text-gray-500">Minimum 6 characters</p>
+                                </div>
+                            </div>
+                            <div id="sa-passMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
+                                        Password</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-current-pass"
+                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-current-pass','saEyeCurrent')"
+                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
+                                                id="saEyeCurrent" class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
+                                        Password</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-new-pass"
+                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-new-pass','saEyeNew')"
+                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
+                                                id="saEyeNew" class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label
+                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Confirm
+                                        Password</label>
+                                    <div class="relative">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
+                                                class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-confirm-pass"
+                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
+                                            placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-confirm-pass','saEyeConfirm')"
+                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
+                                                id="saEyeConfirm" class="fas fa-eye"></i></button>
+                                    </div>
+                                </div>
+                            </div>
+                            <button onclick="saChangePassword()"
+                                class="mt-4 px-8 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition-all flex items-center gap-2">
+                                <i class="fas fa-key"></i> Update Password
+                            </button>
+                        </div>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- User Modal -->
+    <div id="userModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50 modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'userModal')">
+        <div class="bg-white max-w-2xl w-full p-6 md:p-8 rounded-2xl relative max-h-[90vh] overflow-y-auto shadow-heavy animate-slide-up modal-content"
+            onclick="event.stopPropagation()">
+            <button onclick="closeUserModal()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 id="userModalTitle" class="text-2xl font-heading font-bold mb-2 translate-content" data-i18n="add_user">
+                Add User</h3>
+            <p class="text-gray-600 mb-6">Create a new user account</p>
+
+            <form id="userForm" onsubmit="saveUser(event)" class="space-y-4">
+                <input type="hidden" id="userId">
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                            data-i18n="full_name">Full Name *</label>
+                        <input type="text" id="userName" required
+                            class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200">
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                            data-i18n="email_address">Email Address *</label>
+                        <input type="email" id="userEmail" required
+                            class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200">
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                            data-i18n="role">Role *</label>
+                        <select id="userRole" required
+                            class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200 bg-white">
+                            <option value="customer" data-i18n="customer">Customer</option>
+                            <option value="partner" data-i18n="partner">Partner</option>
+                            <option value="admin" data-i18n="admin">Admin</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                            data-i18n="status">Status *</label>
+                        <select id="userStatus" required
+                            class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200 bg-white">
+                            <option value="active" data-i18n="active">Active</option>
+                            <option value="inactive" data-i18n="inactive">Inactive</option>
+                            <option value="pending" data-i18n="pending">Pending</option>
+                            <option value="banned" data-i18n="banned">Banned</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                        data-i18n="detailed_location">Detailed Location</label>
+                    <input type="text" id="userLocationName" placeholder="Specific site or address"
+                        class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200 mb-2">
+
+                    <label class="block mb-2 font-medium text-industrial-gray translate-content"
+                        data-i18n="region">Region</label>
+                    <select id="userCitySelect" onchange="updateLatLongFromCity(this.value)"
+                        class="w-full border-2 border-gray-200 p-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200 bg-white">
+                        <option value="">Select a City</option>
+                        <option value="Addis Ababa">Addis Ababa</option>
+                        <option value="Dire Dawa">Dire Dawa</option>
+                        <option value="Mekelle">Mekelle</option>
+                        <option value="Gondar">Gondar</option>
+                        <option value="Bahir Dar">Bahir Dar</option>
+                        <option value="Hawassa">Hawassa</option>
+                        <option value="Jimma">Jimma</option>
+                        <option value="Adama">Adama</option>
+                        <option value="Jijiga">Jijiga</option>
+                        <option value="Shashemene">Shashemene</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4 bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Latitude</label>
+                        <input type="number" step="any" id="userLat" readonly
+                            class="w-full border-2 border-gray-200 p-2 rounded-lg bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500 mb-1">Longitude</label>
+                        <input type="number" step="any" id="userLng" readonly
+                            class="w-full border-2 border-gray-200 p-2 rounded-lg bg-white">
+                    </div>
+                </div>
+
+                <div class="flex justify-end space-x-3 pt-6 border-t border-gray-200">
+                    <button type="button" onclick="closeUserModal()"
+                        class="px-6 py-3 border-2 border-gray-200 rounded-xl hover:bg-gray-50 transition-colors translate-content"
+                        data-i18n="cancel">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                        class="px-6 py-3 bg-industrial-yellow text-industrial-gray font-bold rounded-xl hover:bg-industrial-orange transition-colors shadow-md hover:shadow-lg">
+                        <span class="translate-content" data-i18n="save_user">Save User</span>
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Rental History Modal -->
+    <div id="rentalModal"
+        class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50 modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'rentalModal')">
+        <div class="bg-white max-w-4xl w-full p-6 md:p-8 rounded-2xl relative max-h-[90vh] overflow-y-auto shadow-heavy animate-slide-up modal-content"
+            onclick="event.stopPropagation()">
+            <button onclick="closeRentalModal()"
+                class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 text-xl transition-colors">
+                <i class="fas fa-times"></i>
+            </button>
+            <h3 class="text-2xl font-heading font-bold mb-2 translate-content" data-i18n="rental_history">Rental History
+            </h3>
+            <p class="text-gray-600 mb-6" id="rentalUserInfo"></p>
+
+            <div id="rentalHistoryContent" class="space-y-4">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ========== GLOBAL STATE ==========
+        let currentSuperAdmin = null;
+        let currentSection = 'dashboard';
+        let currentLanguage = localStorage.getItem('super_admin_lang') || 'en';
+        let map = null;
+        let userMarkers = [];
+        let usersData = [];
+        let pendingUsers = [];
+
+        // ========== LANGUAGE MANAGEMENT ==========
+        function switchLanguage(lang) {
+            currentLanguage = lang;
+            localStorage.setItem('super_admin_lang', lang);
+            document.body.setAttribute('data-lang', lang);
+            applyTranslations(lang);
+            updateLangDropdowns(lang);
+        }
+
+        // ── Unified pill dropdown handler ──
+        function toggleSALangDropdown(id) {
+            const target = document.getElementById(id);
+            document.querySelectorAll('.lang-pill-dropdown').forEach(d => { if (d.id !== id) d.classList.remove('show'); });
+            target?.classList.toggle('show');
+        }
+        window.toggleLangDropdown = toggleSALangDropdown;
+
+        document.addEventListener('click', e => {
+            if (!e.target.closest('.admin-lang-switcher')) {
+                document.querySelectorAll('.lang-pill-dropdown').forEach(d => d.classList.remove('show'));
+            }
+        });
+
+        function updateLangDropdowns(lang) {
+            const flag = lang === 'en' ? '🇺🇸' : '🇪🇹';
+            const label = lang === 'en' ? 'EN' : 'አማ';
+            ['saMobileFlag', 'saDesktopFlag', 'saSidebarFlag'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.textContent = flag;
+            });
+            ['saMobileLabel', 'saDesktopLabel', 'saSidebarLabel'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.textContent = label;
+            });
+            // Active state
+            ['saMobileOptEn', 'saDesktopOptEn', 'saSidebarOptEn'].forEach(id => {
+                document.getElementById(id)?.classList.toggle('active', lang === 'en');
+            });
+            ['saMobileOptAm', 'saDesktopOptAm', 'saSidebarOptAm'].forEach(id => {
+                document.getElementById(id)?.classList.toggle('active', lang === 'am');
+            });
+            document.querySelectorAll('.lang-pill-dropdown').forEach(d => d.classList.remove('show'));
+        }
+
+        function applyTranslations(lang) {
+            const translations = superAdminTranslations[lang] || superAdminTranslations.en;
+
+            // Translate all elements with data-i18n
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[key]) {
+                    el.textContent = translations[key];
+                }
+            });
+
+            // Translate placeholders
+            document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-i18n-placeholder');
+                if (translations[key]) {
+                    el.placeholder = translations[key];
+                }
+            });
+        }
+
+        function updateLangDropdowns(lang) {
+            // Update all dropdowns
+            document.querySelectorAll('.admin-lang-option').forEach(option => {
+                option.classList.remove('active');
+            });
+
+            document.querySelectorAll(`.admin-lang-option[onclick*="${lang}"]`).forEach(option => {
+                option.classList.add('active');
+            });
+
+            // Update button text
+            document.querySelectorAll('.admin-lang-btn span:not(.lang-flag)').forEach(span => {
+                span.textContent = lang.toUpperCase();
+            });
+        }
+
+        function toggleLangDropdown() {
+            const dropdowns = document.querySelectorAll('.admin-lang-dropdown');
+            dropdowns.forEach(dropdown => {
+                dropdown.classList.toggle('show');
+            });
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.admin-lang-switcher')) {
+                document.querySelectorAll('.admin-lang-dropdown').forEach(dropdown => {
+                    dropdown.classList.remove('show');
+                });
+            }
+        });
+
+        // ========== MOBILE MENU ==========
+        function toggleMobileMenu() {
+            const mobileSidebar = document.getElementById('mobileSidebar');
+            mobileSidebar.classList.toggle('hidden');
+        }
+
+        // ========== SECTION NAVIGATION ==========
+        function showSection(section) {
+            currentSection = section;
+
+            // Hide all sections
+            document.querySelectorAll('main > section').forEach(sec => {
+                sec.classList.add('hidden');
+            });
+
+            // Show selected section
+            const targetSection = document.getElementById(`${section}-section`);
+            if (targetSection) {
+                targetSection.classList.remove('hidden');
+            }
+
+            // Update sidebar navigation active state
+            document.querySelectorAll('aside nav button, #mobileSidebar nav button').forEach(btn => {
+                btn.classList.remove('bg-industrial-yellow', 'text-industrial-gray', 'shadow-lg', 'ring-1', 'ring-white/10');
+                btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            });
+
+            // Activate current section button
+            const activeButtons = document.querySelectorAll(`#section-${section}`);
+            activeButtons.forEach(btn => {
+                btn.classList.add('bg-industrial-yellow', 'text-industrial-gray', 'shadow-lg', 'ring-1', 'ring-white/10');
+                btn.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            });
+
+            // Update page title if needed
+            const sectionTitle = document.getElementById('sectionTitle');
+            const sectionSubtitle = document.getElementById('sectionSubtitle');
+            const translations = superAdminTranslations[currentLanguage] || superAdminTranslations.en;
+
+            if (sectionTitle && sectionSubtitle) {
+                switch (section) {
+                    case 'dashboard':
+                        sectionTitle.setAttribute('data-i18n', 'dashboard_title');
+                        sectionSubtitle.setAttribute('data-i18n', 'dashboard_subtitle');
+                        sectionTitle.textContent = translations.dashboard_title || 'Dashboard';
+                        sectionSubtitle.textContent = translations.dashboard_subtitle || 'Full system oversight & management';
+                        break;
+                    case 'users':
+                        sectionTitle.setAttribute('data-i18n', 'user_management');
+                        sectionTitle.textContent = translations.user_management || 'User Management';
+                        sectionSubtitle.textContent = 'Manage all registered users, renters, and partners.';
+                        break;
+                    case 'pending':
+                        sectionTitle.setAttribute('data-i18n', 'pending_approvals');
+                        sectionTitle.textContent = translations.pending_approvals || 'Pending Approvals';
+                        sectionSubtitle.textContent = 'Review and approve new partner applications.';
+                        break;
+                    case 'map':
+                        sectionTitle.setAttribute('data-i18n', 'live_locations');
+                        sectionTitle.textContent = translations.live_locations || 'Live Locations';
+                        sectionSubtitle.textContent = 'Real-time view of user locations and rental sites.';
+                        break;
+                    case 'analytics':
+                        sectionTitle.setAttribute('data-i18n', 'system_analytics');
+                        sectionTitle.textContent = translations.system_analytics || 'System Analytics';
+                        sectionSubtitle.textContent = translations.performance_metrics || 'Performance metrics and growth.';
+                        break;
+                }
+            }
+
+            // Load section-specific data
+            if (section === 'users') {
+                loadUsers();
+            } else if (section === 'pending') {
+                loadPendingApprovals();
+            } else if (section === 'map') {
+                initializeMap();
+            } else if (section === 'analytics') {
+                initializeAnalytics();
+            }
+        }
+
+        // ========== AUTHENTICATION ==========
+        async function superAdminLogin(e) {
+            e.preventDefault();
+
+            const email = document.getElementById('superAdminEmail').value.trim();
+            const password = document.getElementById('superAdminPassword').value;
+            const loginError = document.getElementById('loginError');
+
+            // Show loading
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Logging in...';
+            button.disabled = true;
+
+            try {
+                // Get user details from custom users table
+                const { data: userData, error: userError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('email', email)
+                    .single();
+
+                if (userError || !userData) {
+                    throw new Error('Invalid super admin credentials');
+                }
+
+                // Validate password (Custom Auth: Plain text/simple check per request)
+                if (userData.password !== password) {
+                    throw new Error('Invalid super admin credentials');
+                }
+
+                // Check if user is super admin
+                if (userData.role !== 'super_admin') {
+                    throw new Error('Unauthorized access');
+                }
+
+                if (userData.status !== 'active') {
+                    throw new Error('Account is not active');
+                }
+
+                // Store admin session
+                currentSuperAdmin = userData;
+                localStorage.setItem('current_super_admin', JSON.stringify(userData));
+
+                // Hide login, show admin content
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+                loginError.classList.add('hidden');
+
+                // Apply language
+                applyTranslations(currentLanguage);
+                updateLangDropdowns(currentLanguage);
+
+                // Load initial data
+                await initializeDashboard();
+
+            } catch (error) {
+                console.error('Super Admin login error:', error);
+
+                loginError.querySelector('span').textContent = 'Invalid super admin credentials';
+                loginError.classList.remove('hidden');
+
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        async function superAdminLogout() {
+            await supabase.auth.signOut();
+            localStorage.removeItem('current_super_admin');
+            currentSuperAdmin = null;
+            window.location.reload();
+        }
+
+        function checkSuperAdminAuth() {
+            const adminStr = localStorage.getItem('current_super_admin');
+            if (adminStr) {
+                currentSuperAdmin = JSON.parse(adminStr);
+                document.getElementById('loginScreen').classList.add('hidden');
+                document.getElementById('adminContent').classList.remove('hidden');
+
+                // Apply language
+                applyTranslations(currentLanguage);
+                updateLangDropdowns(currentLanguage);
+
+                // Initialize dashboard
+                initializeDashboard();
+                return true;
+            }
+            return false;
+        }
+
+        // ========== DASHBOARD FUNCTIONS ==========
+        async function initializeDashboard() {
+            await loadDashboardStats();
+            await loadRecentActivity();
+            await loadPendingPreview();
+
+            // Show dashboard by default
+            showSection('dashboard');
+        }
+
+        async function loadDashboardStats() {
+            try {
+                // Get total machines
+                const { count: totalMachines, error: machinesError } = await supabase
+                    .from('machines')
+                    .select('*', { count: 'exact', head: true });
+
+                // Get rental machines
+                const { count: rentalMachines, error: rentalError } = await supabase
+                    .from('machines')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('listing_type', 'rent');
+
+                // Get sale machines
+                const { count: saleMachines, error: saleError } = await supabase
+                    .from('machines')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('listing_type', 'sale');
+
+                // Get active orders
+                const { count: activeOrders, error: ordersError } = await supabase
+                    .from('orders')
+                    .select('*', { count: 'exact', head: true })
+                    .in('status', ['pending', 'confirmed', 'processing']);
+
+                // Get total users
+                const { count: totalUsers, error: usersError } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true });
+
+                // Get partner users
+                const { count: partnerUsers, error: partnersError } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'partner');
+
+                // Get customer users
+                const { count: customerUsers, error: customersError } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'customer');
+
+                // Get pending partners
+                const { count: pendingPartners, error: pendingError } = await supabase
+                    .from('users')
+                    .select('*', { count: 'exact', head: true })
+                    .eq('role', 'partner')
+                    .eq('status', 'pending');
+
+                // Update UI
+                // Helper to safely set text
+                const safelySetText = (id, value) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = value;
+                };
+
+                // Update UI safely
+                safelySetText('stat-total-machines', totalMachines || 0);
+                safelySetText('rental-machines', rentalMachines || 0);
+                safelySetText('sale-machines', saleMachines || 0);
+                safelySetText('stat-active-orders', activeOrders || 0);
+                safelySetText('stat-total-users', totalUsers || 0);
+                safelySetText('partner-users', partnerUsers || 0);
+                safelySetText('customer-users', customerUsers || 0);
+                safelySetText('stat-total-partners', partnerUsers || 0);
+                safelySetText('stat-pending-partners', pendingPartners || 0);
+                safelySetText('stat-rental-machines', rentalMachines || 0);
+                safelySetText('stat-sale-machines', saleMachines || 0);
+
+                // Update pending badges
+                updatePendingBadges(pendingPartners || 0);
+
+                // Calculate revenue (mock data for now)
+                const monthlyRevenue = await calculateMonthlyRevenue();
+                safelySetText('stat-monthly-revenue', `$${monthlyRevenue.toLocaleString()}`);
+
+            } catch (error) {
+                console.error('Error loading dashboard stats:', error);
+            }
+        }
+
+        async function calculateMonthlyRevenue() {
+            try {
+                const { data: orders, error } = await supabase
+                    .from('orders')
+                    .select('final_price, created_at')
+                    .gte('created_at', new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString());
+
+                if (error) throw error;
+
+                return orders.reduce((sum, order) => sum + (parseFloat(order.final_price) || 0), 0);
+            } catch (error) {
+                console.error('Error calculating revenue:', error);
+                return 0;
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                // Get recent orders without invalid join
+                const { data: orders, error: ordersError } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                // Get recent user registrations
+                const { data: users, error: usersError } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(5);
+
+                if (ordersError) throw ordersError;
+
+                const activityContainer = document.getElementById('recentActivity');
+                if (activityContainer) {
+                    activityContainer.innerHTML = '';
+
+                    // Combine and sort activities
+                    const activities = [];
+
+                    if (orders) {
+                        orders.forEach(order => {
+                            // Extract customer name from JSONB or fallback
+                            let customerName = 'Customer';
+                            if (order.customer_info) {
+                                if (typeof order.customer_info === 'string') {
+                                    try {
+                                        const info = JSON.parse(order.customer_info);
+                                        customerName = info.name || info.full_name || 'Customer';
+                                    } catch (e) { }
+                                } else {
+                                    customerName = order.customer_info.name || order.customer_info.full_name || 'Customer';
+                                }
+                            }
+
+                            activities.push({
+                                type: 'order',
+                                title: `New Order: ${order.order_number}`,
+                                description: `${customerName} - $${order.final_price || order.total_amount}`,
+                                time: new Date(order.created_at),
+                                icon: 'fa-shopping-cart',
+                                color: 'blue'
+                            });
+                        });
+                    }
+
+                    if (users) {
+                        users.forEach(user => {
+                            activities.push({
+                                type: 'user',
+                                title: `New ${user.role}: ${user.full_name}`,
+                                description: user.company_name || user.email,
+                                time: new Date(user.created_at),
+                                icon: user.role === 'partner' ? 'fa-handshake' : 'fa-user',
+                                color: user.role === 'partner' ? 'purple' : 'green'
+                            });
+                        });
+                    }
+
+                    // Sort by time
+                    activities.sort((a, b) => b.time - a.time);
+
+                    // Display top 5
+                    activities.slice(0, 5).forEach(activity => {
+                        const timeAgo = getTimeAgo(activity.time);
+
+                        activityContainer.innerHTML += `
+                        <div class="flex items-center p-3 bg-gray-50 rounded-xl">
+                            <div class="w-10 h-10 bg-${activity.color}-100 rounded-lg flex items-center justify-center mr-4">
+                                <i class="fas ${activity.icon} text-${activity.color}-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">${activity.title}</p>
+                                <p class="text-sm text-gray-500">${activity.description}</p>
+                            </div>
+                            <span class="text-sm text-gray-500">${timeAgo}</span>
+                        </div>
+                    `;
+                    });
+
+                }
+            } catch (error) {
+                console.error('Error loading recent activity:', error);
+            }
+        }
+
+        function getTimeAgo(date) {
+            const now = new Date();
+            const diffMs = now - date;
+            const diffMins = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMs / 3600000);
+            const diffDays = Math.floor(diffMs / 86400000);
+
+            if (diffMins < 60) {
+                return `${diffMins} min ago`;
+            } else if (diffHours < 24) {
+                return `${diffHours} hour${diffHours > 1 ? 's' : ''} ago`;
+            } else {
+                return `${diffDays} day${diffDays > 1 ? 's' : ''} ago`;
+            }
+        }
+
+        // ========== USER MANAGEMENT ==========
+        async function loadUsers() {
+            const tableBody = document.getElementById('usersTableBody');
+            const loading = document.getElementById('usersLoading');
+            const empty = document.getElementById('usersEmpty');
+
+            loading.classList.remove('hidden');
+            empty.classList.add('hidden');
+            tableBody.innerHTML = '';
+
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                usersData = users || [];
+
+                if (usersData.length === 0) {
+                    loading.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                // Filter users based on search and role
+                const searchTerm = document.getElementById('userListSearch')?.value.toLowerCase() || '';
+                const roleFilter = document.getElementById('userRoleFilter')?.value || 'all';
+
+                const filteredUsers = usersData.filter(user => {
+                    const matchesSearch = searchTerm === '' ||
+                        user.full_name?.toLowerCase().includes(searchTerm) ||
+                        user.email?.toLowerCase().includes(searchTerm) ||
+                        user.company_name?.toLowerCase().includes(searchTerm);
+
+                    const matchesRole = roleFilter === 'all' || user.role === roleFilter;
+
+                    return matchesSearch && matchesRole;
+                });
+
+                // Render users table
+                tableBody.innerHTML = filteredUsers.map(user => {
+                    const location = user.location || {};
+                    const balance = user.balance || 0;
+
+                    // Determine status badge
+                    let statusBadge = '';
+                    switch (user.status) {
+                        case 'active':
+                            statusBadge = '<span class="badge badge-active translate-content" data-i18n="active">Active</span>';
+                            break;
+                        case 'pending':
+                            statusBadge = '<span class="badge badge-pending translate-content" data-i18n="pending">Pending</span>';
+                            break;
+                        case 'inactive':
+                            statusBadge = '<span class="badge badge-inactive translate-content" data-i18n="inactive">Inactive</span>';
+                            break;
+                        case 'banned':
+                            statusBadge = '<span class="badge badge-banned translate-content" data-i18n="banned">Banned</span>';
+                            break;
+                    }
+
+                    // Determine role badge
+                    let roleBadge = '';
+                    switch (user.role) {
+                        case 'partner':
+                            roleBadge = '<span class="badge badge-partner translate-content" data-i18n="partner">Partner</span>';
+                            break;
+                        case 'admin':
+                            roleBadge = '<span class="badge badge-admin translate-content" data-i18n="admin">Admin</span>';
+                            break;
+                        case 'customer':
+                            roleBadge = '<span class="badge badge-customer translate-content" data-i18n="customer">Customer</span>';
+                            break;
+                        case 'super_admin':
+                            roleBadge = '<span class="badge badge-admin">Super Admin</span>';
+                            break;
+                    }
+
+                    return `
+                        <tr class="hover:bg-gray-50 transition-colors">
+                            <td class="p-4">
+                                <div class="flex items-center">
+                                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-bold mr-3">
+                                        ${user.full_name?.charAt(0) || 'U'}
+                                    </div>
+                                    <div>
+                                        <p class="font-bold">${user.full_name || 'No Name'}</p>
+                                        <p class="text-xs text-gray-500">${user.email}</p>
+                                        ${user.company_name ? `<p class="text-xs text-gray-400">${user.company_name}</p>` : ''}
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="p-4">${roleBadge}</td>
+                            <td class="p-4">${statusBadge}</td>
+                            <td class="p-4 font-bold">$${balance.toFixed(2)}</td>
+                            <td class="p-4">
+                                <p class="text-sm">${location.name || 'Not specified'}</p>
+                                ${location.lat && location.lng ?
+                            `<p class="text-xs text-gray-500">${location.lat.toFixed(4)}, ${location.lng.toFixed(4)}</p>` :
+                            ''}
+                            </td>
+                            <td class="p-4">
+                                <div class="flex justify-end space-x-2">
+                                    ${user.role === 'customer' ? `
+                                    <button onclick="viewRentalHistory('${user.id}', '${user.full_name}')" 
+                                        class="px-3 py-1 text-sm bg-industrial-blue text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center">
+                                        <i class="fas fa-history mr-1"></i> <span class="translate-content" data-i18n="view_details">History</span>
+                                    </button>
+                                    ` : ''}
+                                    <button onclick="openUserModal('${user.id}')" 
+                                        class="px-3 py-1 text-sm bg-industrial-yellow text-white rounded-lg hover:bg-orange-600 transition-colors flex items-center">
+                                        <i class="fas fa-edit mr-1"></i> <span class="translate-content" data-i18n="edit_user">Edit</span>
+                                    </button>
+                                    ${user.role !== 'super_admin' ? `
+                                    <button onclick="deleteUser('${user.id}')" 
+                                        class="px-3 py-1 text-sm bg-industrial-safety text-white rounded-lg hover:bg-red-700 transition-colors flex items-center">
+                                        <i class="fas fa-trash mr-1"></i> <span class="translate-content" data-i18n="delete_user">Delete</span>
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                loading.classList.add('hidden');
+
+            } catch (error) {
+                console.error('Error loading users:', error);
+                loading.classList.add('hidden');
+                empty.classList.remove('hidden');
+            }
+        }
+
+        function filterUsers() {
+            loadUsers();
+        }
+
+        // ========== PENDING APPROVALS ==========
+        async function loadPendingApprovals() {
+            const tableBody = document.getElementById('pendingTableBody');
+            const loading = document.getElementById('pendingLoading');
+            const empty = document.getElementById('noPendingMsg');
+
+            loading.classList.remove('hidden');
+            empty.classList.add('hidden');
+            tableBody.innerHTML = '';
+
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('role', 'partner')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                pendingUsers = users || [];
+
+                if (pendingUsers.length === 0) {
+                    loading.classList.add('hidden');
+                    empty.classList.remove('hidden');
+                    updatePendingBadges(0);
+                    return;
+                }
+
+                // Update pending badges
+                updatePendingBadges(pendingUsers.length);
+
+                // Render pending table
+                tableBody.innerHTML = pendingUsers.map(user => {
+                    const requestDate = new Date(user.created_at);
+                    const formattedDate = requestDate.toLocaleDateString();
+
+                    return `
+                        <tr class="hover:bg-orange-50 transition-colors">
+                            <td class="p-4">
+                                <div class="font-bold">${user.full_name || 'No Name'}</div>
+                                <div class="text-xs text-gray-500">ID: ${user.id.substring(0, 8)}...</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium">${user.company_name || 'No Company'}</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="font-medium">${user.email}</div>
+                            </td>
+                            <td class="p-4">
+                                <div>${formattedDate}</div>
+                                <div class="text-xs text-gray-500">${getTimeAgo(requestDate)}</div>
+                            </td>
+                            <td class="p-4">
+                                <div class="flex justify-end space-x-2">
+                                    <button onclick="approveUser('${user.id}')" 
+                                        class="px-4 py-2 bg-industrial-green hover:bg-green-600 text-white font-bold rounded-lg transition-colors flex items-center">
+                                        <i class="fas fa-check mr-2"></i> <span class="translate-content" data-i18n="approve">Approve</span>
+                                    </button>
+                                    <button onclick="rejectUser('${user.id}')" 
+                                        class="px-4 py-2 bg-industrial-safety hover:bg-red-600 text-white font-bold rounded-lg transition-colors flex items-center">
+                                        <i class="fas fa-times mr-2"></i> <span class="translate-content" data-i18n="reject">Reject</span>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+
+                loading.classList.add('hidden');
+
+            } catch (error) {
+                console.error('Error loading pending approvals:', error);
+                loading.classList.add('hidden');
+                empty.classList.remove('hidden');
+            }
+        }
+
+        async function loadPendingPreview() {
+            try {
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('role', 'partner')
+                    .eq('status', 'pending')
+                    .order('created_at', { ascending: false })
+                    .limit(3);
+
+                if (error) throw error;
+
+                const previewContainer = document.getElementById('pendingPreview');
+
+                if (!users || users.length === 0) {
+                    previewContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-check-circle text-gray-300 text-3xl mb-3"></i>
+                            <p class="text-gray-500">No pending approvals</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                previewContainer.innerHTML = users.map(user => {
+                    const timeAgo = getTimeAgo(new Date(user.created_at));
+
+                    return `
+                        <div class="flex items-center p-3 bg-orange-50 rounded-xl">
+                            <div class="w-10 h-10 rounded-full bg-orange-100 flex items-center justify-center text-orange-600 font-bold mr-3">
+                                ${user.full_name?.charAt(0) || 'P'}
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-medium">${user.full_name}</p>
+                                <p class="text-sm text-gray-600">${user.company_name}</p>
+                            </div>
+                            <span class="text-sm text-gray-500">${timeAgo}</span>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading pending preview:', error);
+            }
+        }
+
+        function updatePendingBadges(count) {
+            const badges = [
+                document.getElementById('pendingBadge'),
+                document.getElementById('mobilePendingBadge'),
+                document.getElementById('headerPendingBadge')
+            ];
+
+            badges.forEach(badge => {
+                if (badge) {
+                    if (count > 0) {
+                        badge.textContent = count;
+                        badge.classList.remove('hidden');
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                }
+            });
+        }
+
+        async function approveUser(userId) {
+            if (!confirm('Approve this partner application?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .update({ status: 'active' })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                // Show success message
+                showNotification('Partner approved successfully', 'success');
+
+                // Refresh data
+                await loadPendingApprovals();
+                await loadPendingPreview();
+                await loadDashboardStats();
+
+            } catch (error) {
+                console.error('Error approving user:', error);
+                showNotification('Failed to approve partner', 'error');
+            }
+        }
+
+        async function rejectUser(userId) {
+            if (!confirm('Reject this partner application?')) return;
+
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .update({ status: 'rejected' })
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                // Show success message
+                showNotification('Partner application rejected', 'success');
+
+                // Refresh data
+                await loadPendingApprovals();
+                await loadPendingPreview();
+                await loadDashboardStats();
+
+            } catch (error) {
+                console.error('Error rejecting user:', error);
+                showNotification('Failed to reject partner', 'error');
+            }
+        }
+
+        function refreshPending() {
+            loadPendingApprovals();
+        }
+
+        // ========== MAP FUNCTIONS ==========
+        async function initializeMap() {
+            if (map) {
+                map.remove();
+            }
+
+            // Initialize map centered on Ethiopia
+            map = L.map('map').setView([9.1450, 40.4897], 6);
+
+            // Add OpenStreetMap tiles
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+
+            // Load user locations
+            await loadUserLocations();
+        }
+
+        async function loadUserLocations() {
+            try {
+                // Clear existing markers
+                userMarkers.forEach(marker => marker.remove());
+                userMarkers = [];
+
+                // Get users with locations
+                const { data: users, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .not('location', 'is', null);
+
+                if (error) throw error;
+
+                // Add markers for each user
+                users.forEach(user => {
+                    const location = user.location;
+                    if (location && location.lat && location.lng) {
+                        // Determine marker color based on role
+                        let markerColor = 'blue';
+                        let iconClass = 'fa-user';
+
+                        switch (user.role) {
+                            case 'partner':
+                                markerColor = 'orange';
+                                iconClass = 'fa-handshake';
+                                break;
+                            case 'admin':
+                                markerColor = 'red';
+                                iconClass = 'fa-shield-alt';
+                                break;
+                            case 'super_admin':
+                                markerColor = 'purple';
+                                iconClass = 'fa-crown';
+                                break;
+                        }
+
+                        // Create custom icon
+                        const icon = L.divIcon({
+                            className: 'custom-marker',
+                            html: `<div class="bg-${markerColor}-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg border-2 border-white">
+                                     <i class="fas ${iconClass} text-xs"></i>
+                                   </div>`,
+                            iconSize: [32, 32],
+                            iconAnchor: [16, 16]
+                        });
+
+                        const marker = L.marker([location.lat, location.lng], { icon })
+                            .addTo(map)
+                            .bindPopup(`
+                                <div class="p-2">
+                                    <strong>${user.full_name || 'Unknown User'}</strong><br>
+                                    <small>${user.role}</small><br>
+                                    <small>${user.email}</small><br>
+                                    <small>${location.name || 'No location name'}</small>
+                                </div>
+                            `);
+
+                        userMarkers.push(marker);
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading user locations:', error);
+            }
+        }
+
+        // ========== ANALYTICS FUNCTIONS ==========
+        async function initializeAnalytics() {
+            await loadRevenueChart();
+            await loadUserGrowthChart();
+            await loadEquipmentStatusChart();
+            await loadRecentOrders();
+        }
+
+        async function loadRevenueChart() {
+            try {
+                const ctx = document.getElementById('revenueChart').getContext('2d');
+
+                // Get revenue data for last 6 months
+                const months = [];
+                const revenues = [];
+
+                for (let i = 5; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    const monthName = date.toLocaleString('default', { month: 'short' });
+                    months.push(monthName);
+
+                    // Calculate revenue for this month
+                    const startDate = new Date(date.getFullYear(), date.getMonth(), 1);
+                    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+                    const { data: orders, error } = await supabase
+                        .from('orders')
+                        .select('final_price')
+                        .gte('created_at', startDate.toISOString())
+                        .lte('created_at', endDate.toISOString());
+
+                    if (!error) {
+                        const monthlyRevenue = orders.reduce((sum, order) => sum + (parseFloat(order.final_price) || 0), 0);
+                        revenues.push(monthlyRevenue);
+                    } else {
+                        revenues.push(0);
+                    }
+                }
+
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Revenue ($)',
+                            data: revenues,
+                            borderColor: '#FFB347',
+                            backgroundColor: 'rgba(255, 179, 71, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    callback: function (value) {
+                                        return '$' + value;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading revenue chart:', error);
+            }
+        }
+
+        async function loadUserGrowthChart() {
+            try {
+                const ctx = document.getElementById('userGrowthChart').getContext('2d');
+
+                // Get user growth data for last 6 months
+                const months = [];
+                const userCounts = [];
+
+                for (let i = 5; i >= 0; i--) {
+                    const date = new Date();
+                    date.setMonth(date.getMonth() - i);
+                    const monthName = date.toLocaleString('default', { month: 'short' });
+                    months.push(monthName);
+
+                    // Count users created up to this month
+                    const endDate = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+
+                    const { count, error } = await supabase
+                        .from('users')
+                        .select('*', { count: 'exact', head: true })
+                        .lte('created_at', endDate.toISOString());
+
+                    if (!error) {
+                        userCounts.push(count || 0);
+                    } else {
+                        userCounts.push(0);
+                    }
+                }
+
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: months,
+                        datasets: [{
+                            label: 'Total Users',
+                            data: userCounts,
+                            backgroundColor: '#4299E1',
+                            borderColor: '#2B6CB0',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    stepSize: 1
+                                }
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading user growth chart:', error);
+            }
+        }
+
+        async function loadEquipmentStatusChart() {
+            try {
+                const ctx = document.getElementById('equipmentStatusChart').getContext('2d');
+
+                // Get equipment status counts
+                const { data: machines, error } = await supabase
+                    .from('machines')
+                    .select('status');
+
+                if (error) throw error;
+
+                const statusCounts = {
+                    available: 0,
+                    rented: 0,
+                    maintenance: 0,
+                    sold: 0
+                };
+
+                machines.forEach(machine => {
+                    if (statusCounts.hasOwnProperty(machine.status)) {
+                        statusCounts[machine.status]++;
+                    }
+                });
+
+                new Chart(ctx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Available', 'Rented', 'Maintenance', 'Sold'],
+                        datasets: [{
+                            data: [
+                                statusCounts.available,
+                                statusCounts.rented,
+                                statusCounts.maintenance,
+                                statusCounts.sold
+                            ],
+                            backgroundColor: [
+                                '#10B981',
+                                '#3B82F6',
+                                '#F59E0B',
+                                '#6B7280'
+                            ],
+                            borderWidth: 2,
+                            borderColor: '#FFFFFF'
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error('Error loading equipment status chart:', error);
+            }
+        }
+
+        async function loadRecentOrders() {
+            const tableContainer = document.getElementById('recentOrdersTable');
+            try {
+                // Simplified query - assuming customer_name is stored directly in orders table as seen in other parts of code
+                const { data: orders, error } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .order('created_at', { ascending: false })
+                    .limit(10);
+
+                if (!orders || orders.length === 0) {
+                    tableContainer.innerHTML = '<p class="text-gray-500">No recent orders</p>';
+                    return;
+                }
+
+                let tableHTML = `
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-200">
+                `;
+
+                orders.forEach(order => {
+                    const date = new Date(order.created_at);
+                    const formattedDate = date.toLocaleDateString();
+
+                    let statusBadge = '';
+                    switch (order.status) {
+                        case 'completed':
+                            statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Completed</span>';
+                            break;
+                        case 'pending':
+                            statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>';
+                            break;
+                        case 'cancelled':
+                            statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Cancelled</span>';
+                            break;
+                        default:
+                            statusBadge = `<span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">${order.status}</span>`;
+                    }
+
+                    tableHTML += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${order.order_number}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${order.customer_name}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm font-bold text-gray-900">$${order.final_price}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm">${statusBadge}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${formattedDate}</td>
+                        </tr>
+                    `;
+                });
+
+                tableHTML += '</tbody></table>';
+                tableContainer.innerHTML = tableHTML;
+
+            } catch (error) {
+                console.error('Error loading recent orders:', error);
+                tableContainer.innerHTML = '<p class="text-red-500">Error loading orders</p>';
+            }
+        }
+
+        // ========== USER MODAL FUNCTIONS ==========
+        function openUserModal(userId = null) {
+            const modal = document.getElementById('userModal');
+            const form = document.getElementById('userForm');
+
+            // Reset form
+            form.reset();
+            document.getElementById('userId').value = '';
+            document.getElementById('userModalTitle').textContent = superAdminTranslations[currentLanguage].add_user;
+
+            // Reset location fields
+            document.getElementById('userLat').value = '';
+            document.getElementById('userLng').value = '';
+
+            // If editing, load user data
+            if (userId) {
+                loadUserForEdit(userId);
+            }
+
+            modal.classList.remove('hidden');
+        }
+
+        async function loadUserForEdit(userId) {
+            try {
+                const { data: user, error } = await supabase
+                    .from('users')
+                    .select('*')
+                    .eq('id', userId)
+                    .single();
+
+                if (error) throw error;
+
+                document.getElementById('userModalTitle').textContent = `Edit: ${user.full_name}`;
+                document.getElementById('userId').value = user.id;
+                document.getElementById('userName').value = user.full_name || '';
+                document.getElementById('userEmail').value = user.email || '';
+                document.getElementById('userRole').value = user.role || 'customer';
+                document.getElementById('userStatus').value = user.status || 'active';
+                document.getElementById('userLocationName').value = user.location?.name || '';
+
+                // Set city if location exists
+                if (user.location && user.location.lat && user.location.lng) {
+                    document.getElementById('userLat').value = user.location.lat;
+                    document.getElementById('userLng').value = user.location.lng;
+                }
+
+            } catch (error) {
+                console.error('Error loading user:', error);
+                showNotification('Failed to load user', 'error');
+                closeUserModal();
+            }
+        }
+
+        function updateLatLongFromCity(city) {
+            const cityCoordinates = {
+                'Addis Ababa': { lat: 9.0054, lng: 38.7419 },
+                'Dire Dawa': { lat: 9.5931, lng: 41.8661 },
+                'Mekelle': { lat: 13.4967, lng: 39.4767 },
+                'Gondar': { lat: 12.6000, lng: 37.4667 },
+                'Bahir Dar': { lat: 11.6000, lng: 37.3833 },
+                'Hawassa': { lat: 7.0500, lng: 38.4667 },
+                'Jimma': { lat: 7.6667, lng: 36.8333 },
+                'Adama': { lat: 8.5500, lng: 39.2667 },
+                'Jijiga': { lat: 9.3500, lng: 42.8000 },
+                'Shashemene': { lat: 7.2000, lng: 38.6000 }
+            };
+
+            if (city && cityCoordinates[city]) {
+                document.getElementById('userLat').value = cityCoordinates[city].lat;
+                document.getElementById('userLng').value = cityCoordinates[city].lng;
+            }
+        }
+
+        async function saveUser(e) {
+            e.preventDefault();
+
+            // Show loading
+            const button = e.target.querySelector('button[type="submit"]');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Saving...';
+            button.disabled = true;
+
+            try {
+                const userId = document.getElementById('userId').value;
+                const userData = {
+                    full_name: document.getElementById('userName').value.trim(),
+                    email: document.getElementById('userEmail').value.trim().toLowerCase(),
+                    role: document.getElementById('userRole').value,
+                    status: document.getElementById('userStatus').value,
+                    location: {
+                        name: document.getElementById('userLocationName').value.trim(),
+                        lat: parseFloat(document.getElementById('userLat').value) || null,
+                        lng: parseFloat(document.getElementById('userLng').value) || null
+                    }
+                };
+
+                // Save to database
+                let result;
+                if (userId) {
+                    // Update existing user
+                    // Remove password from update if you don't intend to change it here
+                    delete userData.password;
+
+                    const { data, error } = await supabase
+                        .from('users')
+                        .update(userData)
+                        .eq('id', userId)
+                        .select();
+
+                    if (error) throw error;
+                    result = data;
+                } else {
+                    // Create new user 
+                    // Set a default password for the new user
+                    userData.password = '123456';
+
+                    const { data, error } = await supabase
+                        .from('users')
+                        .insert([userData])
+                        .select();
+
+                    if (error) throw error;
+                    result = data;
+                }
+
+                // Show success message
+                showNotification(
+                    userId ? 'User updated successfully' : 'User created successfully',
+                    'success'
+                );
+
+                // Close modal
+                closeUserModal();
+
+                // Refresh data
+                await loadUsers();
+                await loadDashboardStats();
+
+                // If map section is active, refresh markers
+                if (currentSection === 'map' && map) {
+                    await loadUserLocations();
+                }
+
+            } catch (error) {
+                console.error('Error saving user:', error);
+                showNotification('Failed to save user: ' + error.message, 'error');
+            } finally {
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        }
+
+        function closeUserModal() {
+            document.getElementById('userModal').classList.add('hidden');
+        }
+
+        async function deleteUser(userId) {
+            if (!confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+                return;
+            }
+
+            try {
+                const { error } = await supabase
+                    .from('users')
+                    .delete()
+                    .eq('id', userId);
+
+                if (error) throw error;
+
+                showNotification('User deleted successfully', 'success');
+
+                // Refresh data
+                await loadUsers();
+                await loadDashboardStats();
+
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showNotification('Failed to delete user', 'error');
+            }
+        }
+
+        // ========== RENTAL HISTORY ==========
+        async function viewRentalHistory(userId, userName) {
+            try {
+                currentRentalUserId = userId;
+
+                const { data: orders, error } = await supabase
+                    .from('orders')
+                    .select('*')
+                    .eq('customer_email', userId) // Assuming customer_email stores user ID
+                    .order('created_at', { ascending: false });
+
+                if (error) throw error;
+
+                document.getElementById('rentalUserInfo').textContent = `Customer: ${userName}`;
+                const contentContainer = document.getElementById('rentalHistoryContent');
+
+                if (!orders || orders.length === 0) {
+                    contentContainer.innerHTML = `
+                        <div class="text-center py-8">
+                            <i class="fas fa-clipboard-list text-gray-300 text-4xl mb-4"></i>
+                            <p class="text-gray-500">No rental history found</p>
+                        </div>
+                    `;
+                } else {
+                    contentContainer.innerHTML = orders.map(order => {
+                        const date = new Date(order.created_at);
+                        const formattedDate = date.toLocaleDateString();
+                        const formattedTime = date.toLocaleTimeString();
+
+                        let statusBadge = '';
+                        switch (order.status) {
+                            case 'completed':
+                                statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Completed</span>';
+                                break;
+                            case 'pending':
+                                statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">Pending</span>';
+                                break;
+                            case 'cancelled':
+                                statusBadge = '<span class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">Cancelled</span>';
+                                break;
+                            default:
+                                statusBadge = `<span class="px-2 py-1 text-xs rounded-full bg-gray-100 text-gray-800">${order.status}</span>`;
+                        }
+
+                        return `
+                            <div class="bg-gray-50 p-4 rounded-xl">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div>
+                                        <h4 class="font-bold">Order: ${order.order_number}</h4>
+                                        <p class="text-sm text-gray-600">${formattedDate} at ${formattedTime}</p>
+                                    </div>
+                                    ${statusBadge}
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 mt-3">
+                                    <div>
+                                        <p class="text-sm text-gray-500">Total Amount</p>
+                                        <p class="font-bold">$${order.final_price}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm text-gray-500">Payment Method</p>
+                                        <p class="font-medium">${order.payment_method || 'Not specified'}</p>
+                                    </div>
+                                </div>
+                                <div class="mt-3">
+                                    <p class="text-sm text-gray-500">Delivery</p>
+                                    <p class="font-medium">${order.delivery_method === 'pickup' ? 'Customer Pickup' : 'Delivery to Site'}</p>
+                                </div>
+                            </div>
+                        `;
+                    }).join('');
+                }
+
+                // Show modal
+                document.getElementById('rentalModal').classList.remove('hidden');
+
+            } catch (error) {
+                console.error('Error loading rental history:', error);
+                showNotification('Failed to load rental history', 'error');
+            }
+        }
+
+        function closeRentalModal() {
+            document.getElementById('rentalModal').classList.add('hidden');
+        }
+
+        // ========== SECTION MANAGEMENT ==========
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('[id$="-section"]').forEach(section => {
+                section.classList.add('hidden');
+            });
+
+            // Update active section button
+            document.querySelectorAll('[id^="section-"]').forEach(btn => {
+                btn.classList.remove('bg-industrial-yellow', 'text-industrial-gray', 'shadow-lg');
+                btn.classList.add('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+            });
+
+            const activeBtn = document.getElementById(`section-${sectionName}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('text-slate-400', 'hover:bg-slate-800', 'hover:text-white');
+                activeBtn.classList.add('bg-industrial-yellow', 'text-industrial-gray', 'shadow-lg');
+            }
+
+            // Show selected section
+            document.getElementById(`${sectionName}-section`).classList.remove('hidden');
+            currentSection = sectionName;
+
+            // Update header
+            updateSectionHeader(sectionName);
+
+            // Load section-specific data
+            if (sectionName === 'dashboard') {
+                loadDashboardStats();
+                loadRecentActivity();
+                loadPendingPreview();
+            } else if (sectionName === 'users') {
+                loadUsers();
+            } else if (sectionName === 'pending') {
+                loadPendingApprovals();
+            } else if (sectionName === 'map') {
+                if (!map) {
+                    initializeMap();
+                } else {
+                    loadUserLocations();
+                }
+            } else if (sectionName === 'analytics') {
+                initializeAnalytics();
+            }
+        }
+
+        function updateSectionHeader(sectionName) {
+            const titleMap = {
+                'dashboard': 'Dashboard',
+                'users': 'User Management',
+                'pending': 'Pending Approvals',
+                'map': 'Live Locations',
+                'analytics': 'System Analytics'
+            };
+
+            const subtitleMap = {
+                'dashboard': 'Full system oversight & management',
+                'users': 'Manage all registered users, renters, and partners',
+                'pending': 'Review and approve new partner applications',
+                'map': 'Real-time view of user locations and rental sites',
+                'analytics': 'Performance metrics and growth'
+            };
+
+            const titleEl = document.getElementById('sectionTitle');
+            const subtitleEl = document.getElementById('sectionSubtitle');
+
+            if (titleEl) {
+                titleEl.textContent = superAdminTranslations[currentLanguage][`${sectionName}_title`] || titleMap[sectionName];
+            }
+
+            if (subtitleEl) {
+                subtitleEl.textContent = superAdminTranslations[currentLanguage][`${sectionName}_subtitle`] || subtitleMap[sectionName];
+            }
+        }
+
+        function toggleMobileMenu() {
+            const sidebar = document.getElementById('mobileSidebar');
+            if (sidebar) sidebar.classList.toggle('hidden');
+        }
+
+        function toggleLangDropdown(id) {
+            const dropdown = document.getElementById(id);
+            if (dropdown) {
+                dropdown.classList.toggle('show');
+            }
+
+            // Close other dropdowns
+            const allDropdowns = document.querySelectorAll('.admin-lang-dropdown');
+            allDropdowns.forEach(d => {
+                if (d.id !== id && d.classList.contains('show')) {
+                    d.classList.remove('show');
+                }
+            });
+        }
+
+        // ========== UTILITY FUNCTIONS ==========
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-6 py-3 rounded-lg shadow-lg z-50 animate-slide-up ${type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                    'bg-blue-500 text-white'
+                }`;
+
+            notification.innerHTML = `
+                <div class="flex items-center">
+                    <span class="mr-2">${type === 'success' ? '✓' : type === 'error' ? '✗' : 'ℹ'}</span>
+                    <div>${message}</div>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        function closeModalOnOutsideClick(event, modalId) {
+            if (event.target.classList.contains('modal-overlay')) {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    modal.classList.add('hidden');
+                }
+            }
+        }
+
+        // Add to super_admin_dashboard.html script
+        let idleTimer;
+
+        function resetIdleTimer() {
+            clearTimeout(idleTimer);
+            idleTimer = setTimeout(() => {
+                // After 30 minutes of inactivity, log out
+                showNotification('Session expired due to inactivity', 'warning');
+                setTimeout(() => superAdminLogout(), 3000);
+            }, 30 * 60 * 1000); // 30 minutes
+        }
+
+        // Reset timer on user activity
+        ['mousemove', 'keypress', 'click', 'scroll'].forEach(event => {
+            document.addEventListener(event, resetIdleTimer);
+        });
+
+        // Initialize timer
+        resetIdleTimer();
+
+        // ========== INITIALIZATION ==========
+        // ========== INITIALIZATION ==========
+        // Initialization moved to initSupabase in config-loader integration
+
+        async function checkSuperAdminAuth() {
+            try {
+                // Check localStorage for super admin session
+                const adminStr = localStorage.getItem('current_super_admin');
+
+                if (!adminStr) {
+                    // No session found, redirect to admin login
+                    window.location.href = 'admin.html';
+                    return false;
+                }
+
+                const adminData = JSON.parse(adminStr);
+
+                // Verify the session is still valid by checking our 'users' table directly
+                // We are NOT using supabase.auth.getUser() because this is Custom Auth
+                const { data: user, error } = await supabase
+                    .from('users')
+                    .select('id, role, status')
+                    .eq('id', adminData.id)
+                    .single();
+
+                if (error || !user) {
+                    console.error('Session verification failed:', error);
+                    localStorage.removeItem('current_super_admin');
+                    window.location.href = 'admin.html';
+                    return false;
+                }
+
+                if (user.role !== 'super_admin') {
+                    // User is not a super admin
+                    alert('Access Denied: You are not a Super Admin');
+                    localStorage.removeItem('current_super_admin');
+                    window.location.href = 'admin.html';
+                    return false;
+                }
+
+                // Session Valid
+                // Now initialize the rest of the dashboard
+                // Show admin content (remove hidden class)
+                const adminContent = document.getElementById('adminContent');
+                if (adminContent) {
+                    adminContent.classList.remove('hidden');
+                }
+
+                applyTranslations(currentLanguage);
+                updateLangDropdowns(currentLanguage);
+
+                await initializeDashboard();
+                return true;
+
+            } catch (error) {
+                console.error('Auth Check Error:', error);
+                window.location.href = 'admin.html';
+                return false;
+            }
+        }
+
+        // Add logout function that properly cleans up
+        async function superAdminLogout() {
+            // Sign out from Supabase Auth
+            await supabase.auth.signOut();
+
+            // Clear all localStorage items
+            localStorage.removeItem('current_super_admin');
+            localStorage.removeItem('supabase.auth.token');
+
+            // Redirect to login page
+            window.location.href = 'admin.html';
+        }
+
+        // ═══ Super Admin: Change Credentials ═══
+        function saFeedback(elId, msg, ok) {
+            const el = document.getElementById(elId);
+            el.textContent = msg;
+            el.className = `mb-4 p-3 rounded-xl text-sm font-medium ${ok
+                ? 'bg-green-50 text-green-700 border border-green-200'
+                : 'bg-red-50 text-red-700 border border-red-200'}`;
+            el.classList.remove('hidden');
+            setTimeout(() => el.classList.add('hidden'), 5000);
+        }
+        function saTogglePass(inputId, iconId) {
+            const el = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            if (el.type === 'password') { el.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
+            else { el.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+        }
+        async function saUpdateName() {
+            const name = document.getElementById('sa-settings-name').value.trim();
+            if (!name) { saFeedback('sa-nameMsg', 'Please enter a name.', false); return; }
+            const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
+            if (!user.id) { saFeedback('sa-nameMsg', 'Not logged in.', false); return; }
+            const { error } = await window.supabase.from('users').update({ full_name: name }).eq('id', user.id);
+            if (error) { saFeedback('sa-nameMsg', 'Error: ' + error.message, false); return; }
+            user.full_name = name; localStorage.setItem('super_admin_user', JSON.stringify(user));
+            saFeedback('sa-nameMsg', '✓ Name updated!', true);
+        }
+        async function saChangeEmail() {
+            const newEmail = document.getElementById('sa-settings-email').value.trim();
+            const pass = document.getElementById('sa-email-pass').value;
+            if (!newEmail || !pass) { saFeedback('sa-emailMsg', 'Please fill in all fields.', false); return; }
+            const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
+            if (!user.id) { saFeedback('sa-emailMsg', 'Not logged in.', false); return; }
+            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id', user.id).eq('password', pass).single();
+            if (ce || !check) { saFeedback('sa-emailMsg', '✗ Current password is incorrect.', false); return; }
+            const { data: ex } = await window.supabase.from('users').select('id').eq('email', newEmail).single();
+            if (ex) { saFeedback('sa-emailMsg', '✗ Email already in use.', false); return; }
+            const { error } = await window.supabase.from('users').update({ email: newEmail }).eq('id', user.id);
+            if (error) { saFeedback('sa-emailMsg', 'Error: ' + error.message, false); return; }
+            user.email = newEmail; localStorage.setItem('super_admin_user', JSON.stringify(user));
+            document.getElementById('sa-settings-email').value = '';
+            document.getElementById('sa-email-pass').value = '';
+            saFeedback('sa-emailMsg', '✓ Email updated! Use new email next login.', true);
+        }
+        async function saChangePassword() {
+            const cur = document.getElementById('sa-current-pass').value;
+            const np = document.getElementById('sa-new-pass').value;
+            const cp = document.getElementById('sa-confirm-pass').value;
+            if (!cur || !np || !cp) { saFeedback('sa-passMsg', 'Please fill in all fields.', false); return; }
+            if (np.length < 6) { saFeedback('sa-passMsg', '✗ New password must be at least 6 characters.', false); return; }
+            if (np !== cp) { saFeedback('sa-passMsg', '✗ Passwords do not match.', false); return; }
+            const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
+            if (!user.id) { saFeedback('sa-passMsg', 'Not logged in.', false); return; }
+            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id', user.id).eq('password', cur).single();
+            if (ce || !check) { saFeedback('sa-passMsg', '✗ Current password is incorrect.', false); return; }
+            const { error } = await window.supabase.from('users').update({ password: np }).eq('id', user.id);
+            if (error) { saFeedback('sa-passMsg', 'Error: ' + error.message, false); return; }
+            document.getElementById('sa-current-pass').value = '';
+            document.getElementById('sa-new-pass').value = '';
+            document.getElementById('sa-confirm-pass').value = '';
+            saFeedback('sa-passMsg', '✓ Password changed successfully!', true);
+        }
+
+        // Make functions available globally
+        window.superAdminLogin = superAdminLogin;
+        window.superAdminLogout = superAdminLogout;
+        window.showSection = showSection;
+        window.toggleMobileMenu = toggleMobileMenu;
+        window.openUserModal = openUserModal;
+        window.closeUserModal = closeUserModal;
+        window.saveUser = saveUser;
+        window.editUser = loadUserForEdit;
+        window.deleteUser = deleteUser;
+        window.approveUser = approveUser;
+        window.rejectUser = rejectUser;
+        window.refreshPending = refreshPending;
+        window.viewRentalHistory = viewRentalHistory;
+        window.closeRentalModal = closeRentalModal;
+        window.switchLanguage = switchLanguage;
+        if (typeof toggleSuperadminLangDropdown !== 'undefined') {
+            window.toggleLangDropdown = toggleSuperadminLangDropdown;
+        } else if (typeof toggleLangDropdown !== 'undefined') {
+            window.toggleLangDropdown = toggleLangDropdown;
+        }
+        window.updateLatLongFromCity = updateLatLongFromCity;
+        window.closeModalOnOutsideClick = closeModalOnOutsideClick;
+        window.filterUsers = filterUsers;
+        window.saUpdateName = saUpdateName;
+        window.saChangeEmail = saChangeEmail;
+        window.saChangePassword = saChangePassword;
+        window.saTogglePass = saTogglePass;
+    </script>
+</body>
+
+</html>

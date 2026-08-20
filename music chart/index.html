@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ETHIOTOP100 | Ethiopian Music Charts</title>
+  <meta name="description"
+    content="Ethiopian music charts powered by Meedish - weekly, monthly, yearly and all-time top tracks.">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    /* ============================================================
+       THEME TOKENS  –  all colours live here, nowhere else
+    ============================================================ */
+    :root,
+    [data-theme="dark"] {
+      --bg: #18181b;
+      /* zinc-900  */
+      --bg-card: #27272a;
+      /* zinc-800  */
+      --bg-card2: #3f3f46;
+      /* zinc-700  */
+      --bg-header: rgba(24, 24, 27, 0.97);
+      --border: #3f3f46;
+      --border-sub: #52525b;
+      --text: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-subtle: #71717a;
+      --popover-bg: #1c1c1e;
+      --popover-bdr: #3f3f46;
+      --track-bg: rgba(39, 39, 42, 0.85);
+      --track-hover: #3f3f46;
+      --track-bdr-h: rgba(234, 179, 8, 0.35);
+      --shadow-tilt: rgba(0, 0, 0, 0.6);
+      --shadow-art: rgba(234, 179, 8, 0.15);
+      --toggle-bg: #3f3f46;
+      --toggle-icon: '☀️';
+      --footer-bdr: #3f3f46;
+    }
+
+    [data-theme="light"] {
+      --bg: #fafaf9;
+      /* warm off-white  */
+      --bg-card: #ffffff;
+      --bg-card2: #f5f5f4;
+      --bg-header: rgba(255, 255, 255, 0.97);
+      --border: #e7e5e4;
+      --border-sub: #d6d3d1;
+      --text: #1c1917;
+      --text-muted: #57534e;
+      --text-subtle: #78716c;
+      --popover-bg: #ffffff;
+      --popover-bdr: #e7e5e4;
+      --track-bg: rgba(255, 255, 255, 0.9);
+      --track-hover: #fef9c3;
+      --track-bdr-h: rgba(234, 179, 8, 0.5);
+      --shadow-tilt: rgba(0, 0, 0, 0.12);
+      --shadow-art: rgba(234, 179, 8, 0.2);
+      --toggle-bg: #fef08a;
+      --toggle-icon: '🌙';
+      --footer-bdr: #e7e5e4;
+    }
+
+    /* ---- Smooth theme transition on everything ---- */
+    *,
+    *::before,
+    *::after {
+      transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    /* But keep transform / opacity snappy */
+    .tilt-box,
+    .artist-avatar,
+    .artist-card,
+    #bioPopover {
+      transition:
+        background-color 0.3s ease,
+        border-color 0.3s ease,
+        color 0.3s ease,
+        box-shadow 0.3s ease,
+        transform 0.2s ease,
+        opacity 0.25s ease !important;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', system-ui, sans-serif;
+    }
+
+    /* ---- Theme toggle button ---- */
+    #theme-toggle {
+      width: 40px;
+      height: 22px;
+      background: var(--toggle-bg);
+      border-radius: 999px;
+      border: 2px solid var(--border);
+      cursor: pointer;
+      position: relative;
+      flex-shrink: 0;
+      transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    #theme-toggle .knob {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 16px;
+      height: 16px;
+      background: #eab308;
+      border-radius: 50%;
+      transition: transform 0.3s cubic-bezier(.4, 0, .2, 1), background 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      line-height: 1;
+    }
+
+    [data-theme="light"] #theme-toggle .knob {
+      transform: translateX(18px);
+      background: #1c1917;
+    }
+
+    /* ---- Meedish card hover ---- */
+    .meedish-card {
+      border-color: var(--border);
+    }
+
+    .meedish-card:hover {
+      border-color: var(--track-bdr-h);
+      box-shadow: 0 8px 32px var(--shadow-art);
+      transform: translateY(-2px);
+    }
+
+    /* ---- 3D tilt ---- */
+    .tilt-box {
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .tilt-box.tilting {
+      box-shadow: 0 25px 50px -12px var(--shadow-tilt);
+    }
+
+    /* ---- Cassette reels ---- */
+    .cassette-reels {
+      display: flex;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+
+    .cassette-reel {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      border: 1.5px solid currentColor;
+      opacity: 0.55;
+      position: relative;
+    }
+
+    .cassette-reel::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 3px;
+      height: 3px;
+      background: currentColor;
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    /* ---- Artist avatar ---- */
+    .artist-avatar {
+      transform-style: preserve-3d;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .artist-avatar:hover {
+      transform: perspective(300px) rotateY(18deg) scale(1.18);
+      box-shadow: -4px 4px 12px rgba(0, 0, 0, 0.3);
+      z-index: 5;
+    }
+
+    /* ---- Bio popover ---- */
+    #bioPopover {
+      position: fixed;
+      z-index: 100;
+      width: 260px;
+      background: var(--popover-bg);
+      border: 1px solid var(--popover-bdr);
+      border-radius: 14px;
+      padding: 14px;
+      opacity: 0;
+      pointer-events: none;
+      transform-origin: left center;
+      transform: perspective(700px) rotateY(-90deg) scale(0.85);
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.25);
+    }
+
+    #bioPopover.open {
+      opacity: 1;
+      pointer-events: auto;
+      transform: perspective(700px) rotateY(0deg) scale(1);
+    }
+
+    #bioPopoverName {
+      color: var(--text);
+    }
+
+    #bioPopoverSubs {
+      color: var(--text-muted);
+    }
+
+    #bioPopoverText {
+      color: var(--text-muted);
+    }
+
+    /* ---- Artist wall tile ---- */
+    .artist-card {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      transform-style: preserve-3d;
+    }
+
+    .artist-card:hover {
+      transform: perspective(600px) rotateX(2deg) rotateY(-2deg) scale(1.02);
+      box-shadow: 0 12px 24px var(--shadow-art);
+      border-color: var(--track-bdr-h);
+      z-index: 3;
+    }
+
+    .artist-card .tile-photo-wrap {
+      position: relative;
+      width: 76px;
+      flex-shrink: 0;
+    }
+
+    .artist-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .artist-card .tile-rank {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      font-size: 9px;
+      font-weight: 900;
+      color: #0b0f17;
+      background: #f2b705;
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    .artist-bio-box {
+      flex: 1;
+      min-width: 0;
+      padding: 8px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .artist-bio-box .tile-name {
+      font-size: 12.5px;
+      font-weight: 800;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .artist-bio-box .tile-views {
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-bottom: 3px;
+    }
+
+    .artist-bio-box .tile-bio {
+      font-size: 10.5px;
+      line-height: 1.4;
+      color: var(--text-subtle);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    /* ---- Section / card backgrounds driven by theme ---- */
+    .theme-card {
+      background: var(--bg-card);
+      border-color: var(--border);
+    }
+
+    .theme-card-inner-border {
+      border-color: var(--border-sub);
+    }
+
+    .theme-text {
+      color: var(--text);
+    }
+
+    .theme-text-muted {
+      color: var(--text-muted);
+    }
+
+    .theme-text-subtle {
+      color: var(--text-subtle);
+    }
+
+    .theme-track {
+      background: var(--track-bg);
+      border-color: var(--border);
+    }
+
+    .theme-track:hover {
+      background: var(--track-hover);
+      border-color: var(--track-bdr-h);
+    }
+
+    .theme-header {
+      background: var(--bg-header);
+      border-color: var(--border);
+    }
+
+    .theme-footer {
+      border-color: var(--footer-bdr);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen pb-16">
+
+  <!-- HEADER – Meedish brand style -->
+  <header class="theme-header border-b backdrop-blur sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <!-- Left: back link + logo -->
+      <div class="flex items-center gap-4">
+        <a href="../index.html" class="flex items-center" title="Back to Meedish">
+          <img src="../meedish-machinery-main/logo/gearIcon.png" alt="Meedish Logo"
+            class="h-8 w-auto object-contain hover:opacity-80 transition-opacity duration-200">
+        </a>
+        <div class="h-5 w-px theme-card hidden sm:block"></div>
+        <h1 class="text-2xl font-black tracking-widest uppercase">
+          <span class="text-yellow-400">ETHIO</span><span class="text-yellow-500">T</span><span
+            class="text-yellow-300">O</span><span class="text-amber-500">P</span><span class="theme-text">100</span>
+        </h1>
+      </div>
+      <!-- Right: theme toggle + refresh -->
+      <div class="flex items-center gap-2">
+        <!-- Theme Toggle -->
+        <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode" aria-label="Toggle theme">
+          <span class="knob">☀️</span>
+        </button>
+        <button onclick="loadAllCharts()"
+          class="text-xs bg-transparent hover:bg-yellow-500 hover:text-black theme-text-muted px-3 py-2 rounded-full border theme-card hover:border-yellow-500 transition font-semibold">
+          <i class="fa-solid fa-rotate-right mr-1"></i> Refresh
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="max-w-7xl mx-auto px-4 mt-8 space-y-10">
+
+    <!-- ALL-TIME ARTISTS + ALL-TIME MUSIC, SIDE BY SIDE -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 meedish-grid">
+
+      <!-- LEFT: ALL-TIME TOP 15 ARTISTS -->
+      <div class="meedish-card theme-card border rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between pb-4 border-b theme-card-inner-border mb-4">
+          <h3 class="font-black text-lg text-yellow-400 flex items-center gap-2">
+            <i class="fa-solid fa-star"></i> All-Time Top 15 Artists
+          </h3>
+          <span class="text-xs bg-yellow-500/10 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/20">Tap for
+            bio</span>
+        </div>
+        <div id="artists-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[700px] overflow-y-auto pr-1">
+          <div class="theme-text-subtle text-sm col-span-full">Loading artists...</div>
+        </div>
+      </div>
+
+      <!-- RIGHT: ALL-TIME MOST HEARD ETHIOPIAN MUSIC -->
+      <div class="meedish-card theme-card border rounded-2xl p-5 flex flex-col">
+        <div class="flex items-center justify-between pb-4 border-b theme-card-inner-border mb-4">
+          <h3 class="font-black text-lg text-yellow-300 flex items-center gap-2">
+            <i class="fa-solid fa-headphones"></i> All-Time Most Heard
+          </h3>
+          <span class="text-xs bg-yellow-500/10 text-yellow-300 px-2 py-0.5 rounded border border-yellow-400/20">No time
+            limit</span>
+        </div>
+        <div id="alltime-chart" class="space-y-3 flex-1 max-h-[700px] overflow-y-auto pr-1">
+          <div class="theme-text-subtle text-sm">Loading All-Time chart...</div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- 3-COLUMN GRID SECTION: WEEKLY, MONTHLY, 3-MONTH -->
+    <section>
+      <h2 class="text-xl font-bold mb-6 theme-text border-l-4 border-yellow-500 pl-3 uppercase tracking-wider">Trending
+        Period Charts</h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <!-- COLUMN 1: WEEKLY TOP 10 -->
+        <div class="tilt-box meedish-card theme-card border rounded-2xl p-5 flex flex-col">
+          <div class="flex items-center justify-between pb-4 border-b theme-card-inner-border mb-4">
+            <h3 class="font-black text-lg text-yellow-400 flex items-center gap-2">
+              <i class="fa-solid fa-bolt"></i> Weekly Top 10
+            </h3>
+            <span
+              class="text-xs bg-yellow-500/10 text-yellow-400 px-2 py-0.5 rounded border border-yellow-500/20">Live</span>
+          </div>
+          <div id="weekly-chart" class="space-y-3 flex-1">
+            <div class="theme-text-subtle text-sm">Loading Weekly Top 10...</div>
+          </div>
+        </div>
+
+        <!-- COLUMN 2: MONTHLY TOP 100 -->
+        <div class="tilt-box meedish-card theme-card border rounded-2xl p-5 flex flex-col">
+          <div class="flex items-center justify-between pb-4 border-b theme-card-inner-border mb-4">
+            <h3 class="font-black text-lg text-yellow-300 flex items-center gap-2">
+              <i class="fa-solid fa-calendar-days"></i> Monthly Top 100
+            </h3>
+            <span
+              class="text-xs bg-yellow-500/10 text-yellow-300 px-2 py-0.5 rounded border border-yellow-400/20">Monthly</span>
+          </div>
+          <div id="monthly-chart" class="space-y-3 flex-1 max-h-[700px] overflow-y-auto pr-1">
+            <div class="theme-text-subtle text-sm">Loading Monthly Top 100...</div>
+          </div>
+        </div>
+
+        <!-- COLUMN 3: 3-MONTH TOP 100 -->
+        <div class="tilt-box meedish-card theme-card border rounded-2xl p-5 flex flex-col">
+          <div class="flex items-center justify-between pb-4 border-b theme-card-inner-border mb-4">
+            <h3 class="font-black text-lg text-amber-400 flex items-center gap-2">
+              <i class="fa-solid fa-chart-line"></i> 3-Month Top 100
+            </h3>
+            <span
+              class="text-xs bg-amber-500/10 text-amber-400 px-2 py-0.5 rounded border border-amber-500/20">Quarterly</span>
+          </div>
+          <div id="three-month-chart" class="space-y-3 flex-1 max-h-[700px] overflow-y-auto pr-1">
+            <div class="theme-text-subtle text-sm">Loading 3-Month Top 100...</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- YEARLY TOP 100 ETHIOPIAN MUSIC SPOTLIGHT -->
+    <section class="theme-card border border-yellow-500/30 rounded-2xl p-6 shadow-2xl">
+      <div class="flex items-center justify-between mb-4">
+        <div>
+          <span class="text-xs font-bold text-yellow-400 tracking-widest uppercase">Annual Leaderboard</span>
+          <h2 class="text-2xl font-black theme-text flex items-center gap-2">
+            <i class="fa-solid fa-crown text-yellow-400"></i> Yearly Top 100 Ethiopian Music
+          </h2>
+        </div>
+        <span class="text-xs theme-text-muted">Updated for 2026</span>
+      </div>
+
+      <!-- Horizontal Scrollable Row for Yearly Chart -->
+      <div id="yearly-chart" class="flex gap-4 overflow-x-auto pb-4 scrollbar-thin scrollbar-thumb-gray-800">
+        <div class="text-gray-500 text-sm">Loading Yearly Top 100...</div>
+      </div>
+    </section>
+
+    <!-- ALL-TIME MOST HEARD ETHIOPIAN MUSIC now lives beside the Artists panel above -->
+
+  </div>
+
+  <!-- Reusable 3D bio popover -->
+  <div id="bioPopover">
+    <div class="flex items-center gap-3 mb-2">
+      <img id="bioPopoverPhoto" src=""
+        class="w-12 h-12 rounded-full object-cover border border-yellow-500/30 flex-shrink-0">
+      <div class="min-w-0">
+        <h5 id="bioPopoverName" class="font-black text-sm truncate"></h5>
+        <p id="bioPopoverSubs" class="text-xs"></p>
+      </div>
+    </div>
+    <p id="bioPopoverText" class="text-xs leading-relaxed max-h-40 overflow-y-auto"></p>
+  </div>
+
+  <script>
+    // YOUR GOOGLE APPS SCRIPT WEB APP DEPLOYMENT URL
+    const BASE_API_URL = "https://script.google.com/macros/s/AKfycbyTNGd6gifwf2rMecx6KNKLtzacsXbpWIeIRRUi_B6UYEkmsJKtM9lhEjvnXZdWX0Bi/exec?action=getChart";
+
+    async function fetchChartData(timeframe) {
+      try {
+        const response = await fetch(`${BASE_API_URL}&timeframe=${timeframe}`);
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error(`Error loading ${timeframe} chart:`, error);
+        return [];
+      }
+    }
+
+    // Existing brand colors reused as the cassette stripe colors — nothing new introduced.
+    // Meedish-aligned palette: yellow/amber tones
+    const CASSETTE_COLORS = [
+      { text: 'text-yellow-400', ring: 'ring-yellow-400/40' },
+      { text: 'text-amber-400', ring: 'ring-amber-400/40' },
+      { text: 'text-yellow-300', ring: 'ring-yellow-300/40' },
+      { text: 'text-amber-500', ring: 'ring-amber-500/40' }
+    ];
+
+    // Holds full track data (incl. bio) keyed so the popover can look it up on click.
+    window.trackDataMap = window.trackDataMap || {};
+
+    // Original cassette-tape SVG icon — body, label window, two reels with spokes,
+    // corner screws. Uses currentColor so it always matches the site's existing
+    // brand colors (no new colors introduced).
+    function cassetteIcon(extraClass) {
+      return `
+        <svg viewBox="0 0 100 56" class="${extraClass}" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <rect x="2" y="2" width="96" height="52" rx="6" opacity="0.9"/>
+          <rect x="18" y="8" width="64" height="14" rx="2" opacity="0.45"/>
+          <circle cx="8" cy="8" r="1.4" fill="currentColor" stroke="none"/>
+          <circle cx="92" cy="8" r="1.4" fill="currentColor" stroke="none"/>
+          <circle cx="8" cy="48" r="1.4" fill="currentColor" stroke="none"/>
+          <circle cx="92" cy="48" r="1.4" fill="currentColor" stroke="none"/>
+          <circle cx="32" cy="38" r="9"/>
+          <circle cx="68" cy="38" r="9"/>
+          <circle cx="32" cy="38" r="1.6" fill="currentColor" stroke="none"/>
+          <circle cx="68" cy="38" r="1.6" fill="currentColor" stroke="none"/>
+          <line x1="32" y1="32" x2="32" y2="44"/>
+          <line x1="26" y1="38" x2="38" y2="38"/>
+          <line x1="68" y1="32" x2="68" y2="44"/>
+          <line x1="62" y1="38" x2="74" y2="38"/>
+        </svg>
+      `;
+    }
+
+    function createTrackCardHTML(track, timeframe, showHorizontal = false, index = 0) {
+      // Direct YouTube Redirect URL
+      const ytUrl = track.youtube_url || `https://www.youtube.com/results?search_query=${encodeURIComponent(track.title + ' ' + track.artist)}`;
+      const color = CASSETTE_COLORS[index % CASSETTE_COLORS.length];
+      const key = `${timeframe}-${track.track_id || track.video_id || track.rank}`;
+      window.trackDataMap[key] = track;
+      const avatarSrc = track.artist_photo || track.cover_art || 'https://via.placeholder.com/80';
+      const viewsText = `${Number(track.streams || 0).toLocaleString('en-US')} views`;
+
+      if (showHorizontal) {
+        return `
+          <a href="${ytUrl}" target="_blank" class="flex-shrink-0 w-48 theme-card border hover:border-yellow-500/50 rounded-xl p-3 transition group block">
+            <div class="${color.text} mb-2">
+              ${cassetteIcon('w-full h-8')}
+            </div>
+            <div class="w-full h-32 rounded-lg overflow-hidden relative mb-2" style="background:var(--bg-card2)">
+              <img src="${track.cover_art || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+              <span class="absolute top-2 left-2 bg-black/80 ${color.text} text-xs font-black px-2 py-0.5 rounded">#${track.rank}</span>
+              <div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition">
+                <i class="fa-brands fa-youtube text-red-500 text-3xl"></i>
+              </div>
+              <img src="${avatarSrc}" onclick="toggleBio(event, '${key}')"
+                class="artist-avatar absolute bottom-2 right-2 w-9 h-9 rounded-full object-cover border-2 ring-2 ${color.ring}" style="border-color:var(--bg-card2)">
+            </div>
+            <h4 class="font-bold text-sm theme-text truncate group-hover:text-yellow-400">${track.title}</h4>
+            <p class="text-xs theme-text-muted truncate">${track.artist}</p>
+            <p class="text-[11px] ${color.text} font-mono font-bold mt-0.5">${viewsText}</p>
+          </a>
+        `;
+      }
+
+      return `
+        <a href="${ytUrl}" target="_blank" class="theme-track border rounded-xl p-3 transition flex items-center justify-between group block">
+          <div class="flex items-center space-x-3 overflow-hidden">
+            <span class="text-sm font-black w-5 text-center theme-text-muted group-hover:text-yellow-400">${track.rank}</span>
+            <div class="${color.text} flex-shrink-0">
+              ${cassetteIcon('w-11 h-7')}
+            </div>
+            <div class="w-10 h-10 rounded-lg overflow-hidden flex-shrink-0 relative" style="background:var(--bg-card2)">
+              <img src="${track.cover_art || 'https://via.placeholder.com/150'}" class="w-full h-full object-cover">
+            </div>
+            <img src="${avatarSrc}" onclick="toggleBio(event, '${key}')"
+              class="artist-avatar w-8 h-8 rounded-full object-cover ring-2 ${color.ring}" style="border:2px solid var(--bg-card)">
+            <div class="truncate">
+              <h4 class="font-bold text-sm theme-text truncate group-hover:text-yellow-400">${track.title}</h4>
+              <p class="text-xs theme-text-muted truncate">${track.artist}</p>
+              <p class="text-[11px] ${color.text} font-mono font-bold">${viewsText}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 flex-shrink-0 pl-2">
+            <span class="text-red-500 group-hover:scale-110 transition"><i class="fa-brands fa-youtube text-lg"></i></span>
+          </div>
+        </a>
+      `;
+    }
+
+    // Flips the bio popover open beside whichever artist avatar was clicked.
+    function toggleBio(event, key) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const popover = document.getElementById('bioPopover');
+      const wasOpenForThis = popover.dataset.key === key && popover.classList.contains('open');
+
+      if (wasOpenForThis) {
+        popover.classList.remove('open');
+        return;
+      }
+
+      const track = window.trackDataMap[key];
+      if (!track) return;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const popoverWidth = 260;
+      let left = rect.right + 12;
+      if (left + popoverWidth > window.innerWidth - 12) {
+        left = rect.left - popoverWidth - 12; // flip to the left if it would overflow
+      }
+      let top = Math.max(12, Math.min(rect.top - 20, window.innerHeight - 220));
+
+      document.getElementById('bioPopoverPhoto').src = track.artist_photo || track.cover_art || 'https://via.placeholder.com/80';
+      document.getElementById('bioPopoverName').textContent = track.artist || 'Unknown Artist';
+      document.getElementById('bioPopoverSubs').textContent = track.subscribers
+        ? `${Number(track.subscribers).toLocaleString('en-US')} subscribers`
+        : '';
+      document.getElementById('bioPopoverText').textContent = track.bio && track.bio.trim()
+        ? track.bio
+        : 'No artist bio available yet.';
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+      popover.dataset.key = key;
+      popover.classList.add('open');
+    }
+
+    document.addEventListener('click', (e) => {
+      const popover = document.getElementById('bioPopover');
+      if (!popover.contains(e.target)) popover.classList.remove('open');
+    });
+
+    // 3D tilt-on-hover for the Weekly / Monthly / 3-Month boxes
+    function initTiltBoxes() {
+      document.querySelectorAll('.tilt-box').forEach((box) => {
+        box.addEventListener('mousemove', (e) => {
+          const rect = box.getBoundingClientRect();
+          const x = e.clientX - rect.left;
+          const y = e.clientY - rect.top;
+          const rotateX = ((y - rect.height / 2) / rect.height) * -6;
+          const rotateY = ((x - rect.width / 2) / rect.width) * 6;
+          box.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.01)`;
+          box.classList.add('tilting');
+        });
+        box.addEventListener('mouseleave', () => {
+          box.style.transform = 'perspective(900px) rotateX(0) rotateY(0) scale(1)';
+          box.classList.remove('tilting');
+        });
+      });
+    }
+    initTiltBoxes();
+
+    async function fetchArtists() {
+      try {
+        const base = BASE_API_URL.replace("action=getChart", "action=getArtists");
+        const response = await fetch(base);
+        const data = await response.json();
+        return Array.isArray(data) ? data : [];
+      } catch (error) {
+        console.error("Error loading artists:", error);
+        return [];
+      }
+    }
+
+    window.artistDataMap = window.artistDataMap || {};
+
+    function renderArtistTile(a, index) {
+      const color = CASSETTE_COLORS[index % CASSETTE_COLORS.length];
+      const key = `artist-${a.rank}`;
+      window.artistDataMap[key] = a;
+      const photo = a.artist_photo || 'https://via.placeholder.com/150';
+      const bioSnippet = (a.bio && a.bio.trim()) ? a.bio.trim() : 'No bio available yet.';
+      return `
+        <div class="artist-card ${color.ring} ring-1" onclick="toggleArtistBio(event, '${key}')">
+          <div class="tile-photo-wrap">
+            <span class="tile-rank">#${a.rank}</span>
+            <img src="${photo}" loading="lazy">
+          </div>
+          <div class="artist-bio-box">
+            <div class="tile-name">${a.artist}</div>
+            <div class="tile-views">${Number(a.total_views || 0).toLocaleString('en-US')} views</div>
+            <div class="tile-bio">${bioSnippet}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function toggleArtistBio(event, key) {
+      event.preventDefault();
+      event.stopPropagation();
+
+      const popover = document.getElementById('bioPopover');
+      const wasOpenForThis = popover.dataset.key === key && popover.classList.contains('open');
+      if (wasOpenForThis) {
+        popover.classList.remove('open');
+        return;
+      }
+
+      const a = window.artistDataMap[key];
+      if (!a) return;
+
+      const rect = event.currentTarget.getBoundingClientRect();
+      const popoverWidth = 260;
+      let left = rect.right + 12;
+      if (left + popoverWidth > window.innerWidth - 12) {
+        left = rect.left - popoverWidth - 12;
+      }
+      let top = Math.max(12, Math.min(rect.top - 20, window.innerHeight - 220));
+
+      document.getElementById('bioPopoverPhoto').src = a.artist_photo || 'https://via.placeholder.com/80';
+      document.getElementById('bioPopoverName').textContent = a.artist || 'Unknown Artist';
+      document.getElementById('bioPopoverSubs').textContent = a.subscribers
+        ? `${Number(a.subscribers).toLocaleString('en-US')} subscribers · ${a.track_count || 0} tracked songs`
+        : '';
+      document.getElementById('bioPopoverText').textContent = a.bio && a.bio.trim()
+        ? a.bio
+        : 'No artist bio available yet.';
+
+      popover.style.left = `${left}px`;
+      popover.style.top = `${top}px`;
+      popover.dataset.key = key;
+      popover.classList.add('open');
+    }
+
+    async function loadSection(id, timeframe, showHorizontal, emptyMsg) {
+      const el = document.getElementById(id);
+      try {
+        const data = await fetchChartData(timeframe);
+        el.innerHTML = data.length > 0
+          ? data.map((t, i) => createTrackCardHTML(t, timeframe, showHorizontal, i)).join('')
+          : `<div class="text-xs text-gray-500">${emptyMsg}</div>`;
+      } catch (err) {
+        console.error(`Failed loading ${timeframe}:`, err);
+        el.innerHTML = `<div class="text-xs text-red-400">Couldn't load ${timeframe} chart. Check the API deployment.</div>`;
+      }
+    }
+
+    async function loadArtistsSection() {
+      const el = document.getElementById("artists-grid");
+      try {
+        const artistsData = await fetchArtists();
+        const top15 = artistsData.slice(0, 15);
+        el.innerHTML = top15.length > 0
+          ? top15.map((a, i) => renderArtistTile(a, i)).join('')
+          : `<div class="text-xs text-gray-500 col-span-full">No artist rankings yet — run "Refresh All Stats" then rebuild artists in the sheet.</div>`;
+      } catch (err) {
+        console.error("Failed loading artists:", err);
+        el.innerHTML = `<div class="text-xs text-red-400 col-span-full">Couldn't load artist rankings. Check the API deployment.</div>`;
+      }
+    }
+
+    async function loadAllCharts() {
+      // Every section loads independently and in parallel — one failing
+      // (e.g. a stale deployment missing an endpoint) can't freeze the rest.
+      await Promise.allSettled([
+        loadArtistsSection(),
+        loadSection("weekly-chart", "weekly", false, "No weekly entries found."),
+        loadSection("monthly-chart", "monthly", false, "No monthly entries found."),
+        loadSection("three-month-chart", "3month", false, "No 3-month entries found."),
+        loadSection("yearly-chart", "yearly", true, "No yearly entries found."),
+        loadSection("alltime-chart", "alltime", false, "No all-time entries found.")
+      ]);
+    }
+
+    // ---- Theme toggle system ----
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+      const knob = document.querySelector('#theme-toggle .knob');
+      if (knob) knob.textContent = theme === 'dark' ? '\u2600\uFE0F' : '\uD83C\uDF19';
+      localStorage.setItem('ethiotop100-theme', theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      applyTheme(current === 'dark' ? 'light' : 'dark');
+    }
+
+    // Restore saved preference immediately (avoids flash)
+    (function () {
+      const saved = localStorage.getItem('ethiotop100-theme');
+      if (saved) applyTheme(saved);
+    })();
+
+    // Initialize on page load
+    loadAllCharts();
+  </script>
+
+  <!-- Meedish footer -->
+  <footer class="theme-footer border-t mt-16 py-8 text-center">
+    <div class="bg-yellow-500 h-1 w-full mb-6"></div>
+    <p class="theme-text-subtle text-xs uppercase tracking-widest">
+      &copy; 2026 <a href="../index.html" class="text-yellow-400 hover:text-yellow-300 transition">MEEDISH LLC</a>
+      &mdash; ETHIOTOP100 Music Chart
+    </p>
+  </footer>
+</body>
+
+</html>

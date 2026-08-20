@@ -1,0 +1,1801 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Meedish Design Solutions</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+  <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
+  <script src="supabase.js"></script>
+  <link rel="icon" href="./logo/meedishllc.png" type="image/png">
+
+  <style>
+
+    body {
+
+        overflow-x: hidden; /* Prevents horizontal scroll/distortion */
+
+    }
+
+    @keyframes slide-loop {
+
+      0% { transform: translateX(0); }
+
+      100% { transform: translateX(-50%); }
+
+    }
+
+    .animate-slide-loop {
+
+      animation: slide-loop 20s linear infinite;
+
+      width: max-content;
+
+    }
+
+/* Portfolio Iframe Styling */
+
+.portfolio-preview-container {
+
+  width: 100%;
+
+  height: 100%;
+
+  overflow: hidden;
+
+  position: relative;
+
+  background-color: #1f2937; /* Dark gray background while loading */
+
+}
+
+
+
+.portfolio-iframe {
+
+  width: 400%;  /* 4x width to render desktop view */
+
+  height: 400%; /* 4x height */
+
+  border: none;
+
+  transform: scale(0.25); /* Shrink back down to fit */
+
+  transform-origin: 0 0;
+
+  pointer-events: none; /* Prevents scrolling inside iframe so the slider works */
+
+}
+
+    .bg-radial-gradient {
+
+      background: radial-gradient(circle at center, #f3f4f6, #d1d5db);
+
+    }
+
+    /* Smooth transitions for team cards */
+
+.team-member-card {
+
+    transition: all 0.3s ease;
+
+}
+
+
+
+.team-member-card .full-description {
+
+    animation: fadeIn 0.3s ease;
+
+}
+
+
+
+.team-member-card .description {
+
+    animation: fadeIn 0.3s ease;
+
+}
+
+
+
+@keyframes fadeIn {
+
+    from { opacity: 0; transform: translateY(-10px); }
+
+    to { opacity: 1; transform: translateY(0); }
+
+}
+
+
+
+/* Portfolio button styling */
+
+
+
+
+
+.portfolio-link-btn:hover {
+
+    transform: translateY(-2px);
+
+ 
+
+}
+
+  </style>
+
+</head>
+
+
+
+<body class="overflow-x-hidden">
+
+
+
+<div class="relative min-h-screen flex flex-col overflow-hidden bg-[radial-gradient(circle_at_center,_#f3f4f6,_#d1d5db)]">
+
+    
+
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 w-full transition-all duration-300 bg-transparent">
+
+      <div class="max-w-7xl mx-auto px-4 md:px-8 flex justify-between items-center h-20 md:h-28">
+
+        <div class="flex items-center space-x-2 z-60">
+
+          <img src="./logo/meedishllc.png" alt="MEEDISH Logo" class="h-16 md:h-24 w-auto" onerror="this.style.display='none'; document.getElementById('alt-logo').classList.remove('hidden');">
+
+          <span id="alt-logo" class="hidden text-2xl font-bold text-gray-800">MEEDISH</span>
+
+        </div>
+
+
+
+        <div class="hidden lg:flex items-center space-x-2 bg-gray-500 backdrop-blur-sm rounded-full p-1">
+            <a href="#home" class="px-4 py-2 text-white hover:bg-yellow-500 rounded-full transition duration-200">Home</a>
+            <a href="#service" class="px-4 py-2 text-white hover:bg-yellow-500 rounded-full transition duration-200">Services</a>
+            <a href="#team" class="px-4 py-2 text-white hover:bg-yellow-500 rounded-full transition duration-200">Team</a>
+            <a href="#portfolio" class="px-4 py-2 text-white hover:bg-yellow-500 rounded-full transition duration-200">Portfolio</a>
+            <a href="#platforms" class="px-4 py-2 text-white hover:bg-yellow-500 rounded-full transition duration-200">Platforms</a>
+        </div>
+
+
+
+        <a href="#contact" class="bg-yellow-500 text-white px-8 py-3 rounded-full hover:bg-yellow-600 transition duration-300 hidden lg:block font-bold shadow-lg transform hover:scale-105">Get Started</a>
+
+
+
+        <button id="menu-btn" class="lg:hidden text-gray-800 focus:outline-none p-2 rounded-full hover:bg-gray-100 transition z-60">
+
+          <svg id="menu-icon" class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+
+          </svg>
+
+          <svg id="close-icon" class="w-8 h-8 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+
+          </svg>
+
+        </button>
+
+      </div>
+
+    </nav>
+
+
+
+    <div id="mobile-menu" class="lg:hidden fixed inset-0 h-0 bg-white shadow-lg overflow-hidden transition-all duration-300 z-40">
+
+      <div class="pt-24 pb-6 px-6 space-y-4">
+
+        <a href="#home" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl">Home</a>
+
+        <a href="#service" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl">Services</a>
+
+        <a href="#team" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl">Team</a>
+
+        <a href="#portfolio" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl">Portfolio</a>
+
+        <a href="#platforms" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl text-yellow-600 font-bold">Platforms</a>
+
+        <a href="admin.html" class="block px-4 py-3 text-gray-800 hover:bg-gray-100 rounded-lg transition text-center font-medium text-xl text-yellow-600">Admin</a>
+
+        <a href="#contact" class="block bg-yellow-500 text-white px-6 py-3 rounded-lg hover:bg-yellow-600 transition text-center font-medium mt-4 text-xl">Get Started</a>
+
+      </div>
+
+    </div>
+
+
+
+    <div id="home" class="relative flex flex-col lg:items-center lg:justify-center w-full px-6 lg:px-16 z-10 pt-32 pb-20 min-h-screen">
+
+      <!-- Background image: Original for mobile, subtle for desktop -->
+
+      <div class="absolute inset-0 pointer-events-none opacity-20 mt-32 lg:mt-24 lg:opacity-100 -z-0 flex items-start lg:items-center justify-center lg:justify-start">
+
+        <img src="./png/meedish half logo 1.png" 
+
+            alt="Hero Background" 
+
+            class="w-full h-full object-cover lg:object-contain object-left lg:object-left"
+
+            onerror="this.style.display='none'">
+
+      </div>
+
+
+
+      <!-- Text content: Original Left-aligned on mobile, Refined Centered on desktop -->
+
+      <div class="relative flex-1 flex flex-col items-start lg:items-center justify-center text-left lg:text-center z-10 max-w-7xl mx-auto">
+
+        <h1 class="leading-[1.1] tracking-tight mb-8 uppercase font-bold text-gray-500 text-5xl lg:text-gray-800 lg:text-8xl lg:tracking-tighter">
+
+            <span class="text-yellow-500">Design</span> Solutions <br>
+
+            Rooted In <span class="text-yellow-500">Culture</span>
+
+        </h1>
+
+      </div>
+
+
+
+      <!-- Down arrow -->
+
+      <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce cursor-pointer z-20">
+
+        <a href="#service">
+
+          <svg class="w-8 h-8 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+
+          </svg>
+
+        </a>
+
+      </div>
+
+    </div>
+
+</div>
+
+  <script>
+
+      const btn = document.getElementById("menu-btn");
+
+      const menu = document.getElementById("mobile-menu");
+
+      const menuIcon = document.getElementById("menu-icon");
+
+      const closeIcon = document.getElementById("close-icon");
+
+      const navbar = document.getElementById("navbar");
+
+
+
+      btn.addEventListener("click", () => {
+
+        const isOpen = menu.classList.contains('h-0');
+
+        
+
+        if (isOpen) {
+
+          menu.classList.remove('h-0');
+
+          menu.classList.add('h-screen');
+
+          menuIcon.classList.add('hidden');
+
+          closeIcon.classList.remove('hidden');
+
+        } else {
+
+          menu.classList.remove('h-screen');
+
+          menu.classList.add('h-0');
+
+          menuIcon.classList.remove('hidden');
+
+          closeIcon.classList.add('hidden');
+
+        }
+
+      });
+
+
+
+      document.querySelectorAll('#mobile-menu a').forEach(link => {
+
+        link.addEventListener('click', () => {
+
+          menu.classList.remove('h-screen');
+
+          menu.classList.add('h-0');
+
+          menuIcon.classList.remove('hidden');
+
+          closeIcon.classList.add('hidden');
+
+        });
+
+      });
+
+
+
+      window.addEventListener("scroll", () => {
+
+        if (window.scrollY > 50) {
+
+          navbar.classList.remove("bg-transparent");
+
+          navbar.classList.add("bg-white", "shadow-md");
+
+        } else {
+
+          navbar.classList.remove("bg-white", "shadow-md");
+
+          navbar.classList.add("bg-transparent");
+
+        }
+
+      });
+
+    </script>
+
+    
+
+<section class="w-full py-20 bg-zinc-900 text-center relative overflow-hidden">
+
+    <!-- Subtle overlay for the services header -->
+
+    <div class="absolute inset-0 opacity-30 bg-[radial-gradient(circle_at_center,_#444,_transparent)]"></div>
+
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+
+        <h2 class="text-5xl md:text-7xl font-bold text-yellow-500 uppercase tracking-tighter">
+
+            OUR <br> SERVICES
+
+        </h2>
+
+    </div>
+
+</section>
+
+
+
+<!-- Services Section -->
+
+<section id="service"  class="w-full py-16 lg:py-32 relative overflow-hidden bg-white">
+
+  <div class="absolute inset-0 bg-cover bg-center opacity-5" 
+
+       style="background-image: url('./background/lighter.jpg');">
+
+  </div>
+
+
+
+  <div class="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+
+
+
+    <!-- Service Item -->
+
+    <button 
+
+      class="service-button group relative w-full h-80 flex items-center justify-center rounded-3xl border-2 border-yellow-500 overflow-hidden shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+
+      data-modal-target="graphic-design">
+
+        <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500" style="background-image: url('./background/Gemini_Generated_Image_aavopgaavopgaavo.png');"></div>
+
+        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300"></div>
+
+        <span class="relative z-10 text-white text-2xl font-black uppercase tracking-widest px-8 py-4 rounded-full border border-white/30 backdrop-blur-md pointer-events-none">
+
+          Graphic Design
+
+        </span>
+
+    </button>
+
+
+
+    <!-- Another Service -->
+
+    <button 
+
+      class="service-button group relative w-full h-80 flex items-center justify-center rounded-3xl border-2 border-yellow-500 overflow-hidden shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+
+      data-modal-target="web-design-hosting">
+
+        <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500" style="background-image: url('./background/Gemini_Generated_Image_aavopgaavopgaavo.png');"></div>
+
+        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300"></div>
+
+        <span class="relative z-10 text-white text-2xl font-black uppercase tracking-widest px-8 py-4 rounded-full border border-white/30 backdrop-blur-md pointer-events-none">
+
+          Web Design
+
+        </span>
+
+    </button>
+
+
+
+    <!-- Another Service -->
+
+    <button 
+
+      class="service-button group relative w-full h-80 flex items-center justify-center rounded-3xl border-2 border-yellow-500 overflow-hidden shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+
+      data-modal-target="ui-ux-consult">
+
+        <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500" style="background-image: url('./background/Gemini_Generated_Image_aavopgaavopgaavo.png');"></div>
+
+        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300"></div>
+
+        <span class="relative z-10 text-white text-2xl font-black uppercase tracking-widest px-8 py-4 rounded-full border border-white/30 backdrop-blur-md pointer-events-none">
+
+          UI/UX Consult
+
+        </span>
+
+    </button>
+
+
+
+    <!-- Custom Service Hubs -->
+
+    <button 
+
+      class="service-button group relative w-full h-80 flex items-center justify-center rounded-3xl border-2 border-yellow-500 overflow-hidden shadow-2xl transform hover:-translate-y-2 transition-all duration-300 cursor-pointer"
+
+      data-modal-target="custom-service-hubs">
+
+        <div class="absolute inset-0 bg-cover bg-center grayscale group-hover:grayscale-0 transition-all duration-500" style="background-image: url('./background/Gemini_Generated_Image_aavopgaavopgaavo.png');"></div>
+
+        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-300"></div>
+
+        <span class="relative z-10 text-white text-2xl font-black uppercase tracking-widest px-8 py-4 rounded-full border border-white/30 backdrop-blur-md pointer-events-none">
+
+          Custom Service Hubs
+
+        </span>
+
+    </button>
+
+  </div>
+
+</section>
+
+
+
+<!-- Modal -->
+
+<div id="serviceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 transition-opacity duration-300 opacity-0 pointer-events-none">
+
+  <div class="bg-white p-8 rounded-lg shadow-xl relative w-11/12 max-w-2xl max-h-[90vh] overflow-y-auto transform -translate-y-4 opacity-0 transition-all duration-300 ease-in-out">
+
+      <button class="modal-close-btn absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-2xl leading-none">&times;</button>
+
+      <div class="flex flex-col items-center justify-center text-center">
+
+          <i id="modalIcon" class="text-5xl text-yellow-500 mb-4"></i>
+
+          <h3 id="modalTitle" class="text-3xl font-bold text-yellow-500 mb-4"></h3>
+
+          <p id="modalDescription" class="text-gray-700 text-lg mb-6"></p>
+
+          
+
+          <!-- Gallery Section -->
+
+          <div id="modalGallery" class="w-full mt-4 hidden border-t border-gray-100 pt-6">
+
+              <h4 class="text-xl font-bold text-gray-800 mb-4 uppercase tracking-wider">Our Graphic Design Work</h4>
+
+              <div id="galleryGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                  <!-- Images will be injected here -->
+
+              </div>
+
+          </div>
+
+      </div>
+
+  </div>
+
+</div>
+
+
+
+
+
+<script>
+
+  const serviceModalsData = {
+
+    "graphic-design": {
+
+      icon: "fas fa-paint-brush",
+
+      title: "Graphic Design",
+
+      description: "Custom T-shirts, postcards, logos, branding materials, and more. We create visually stunning designs that represent your brand perfectly.",
+
+      images: [
+
+        "./png/africa_a-removebg-preview.png",
+
+        "./png/meedish site africa image-01.png",
+
+        "./png/meedish site all-01.png",
+
+        "./png/meedish site background-01.png"
+
+      ]
+
+    },
+
+    "web-design-hosting": {
+
+      icon: "fas fa-laptop-code",
+
+      title: "Web Design & Hosting",
+
+      description: "Professional websites with fast hosting and responsive design tailored to your business needs."
+
+    },
+
+    "ui-ux-consult": {
+
+      icon: "fas fa-mobile-alt",
+
+      title: "UI/UX Consultation",
+
+      description: "Expert guidance to optimize user experience and improve design workflows for better engagement."
+
+    },
+
+    "custom-service-hubs": {
+
+      icon: "fas fa-cubes",
+
+      title: "Custom Service Hubs",
+
+      description: "Discover our specialized service platforms: Yetal, BeteBrana (coming soon), E-tebeka (coming soon), and Meedish Machinery - tailored solutions for your unique business needs."
+
+    }
+
+  };
+
+
+
+  const modal = document.getElementById('serviceModal');
+
+  const modalContent = modal.querySelector('div');
+
+  const modalIcon = document.getElementById('modalIcon');
+
+  const modalTitle = document.getElementById('modalTitle');
+
+  const modalDescription = document.getElementById('modalDescription');
+
+  const closeButtons = document.querySelectorAll('.modal-close-btn');
+
+  const serviceButtons = document.querySelectorAll('.service-button');
+
+
+
+  function openModal(serviceIdOrData) {
+
+    let data;
+
+    if (typeof serviceIdOrData === 'string') {
+
+        data = serviceModalsData[serviceIdOrData];
+
+    } else {
+
+        data = serviceIdOrData;
+
+    }
+
+    
+
+    if (!data) return;
+
+
+
+    modalIcon.className = (data.icon || 'fas fa-cog') + " text-5xl text-yellow-500 mb-4";
+
+    modalTitle.textContent = data.title;
+
+    modalDescription.textContent = data.description;
+
+
+
+    // Handle Gallery
+
+    const modalGallery = document.getElementById('modalGallery');
+
+    const galleryGrid = document.getElementById('galleryGrid');
+
+    
+
+    if (data.images && data.images.length > 0) {
+
+        galleryGrid.innerHTML = '';
+
+        data.images.forEach(src => {
+
+            const container = document.createElement('div');
+
+            container.className = 'relative group overflow-hidden rounded-xl shadow-md bg-gray-100 h-48';
+
+            
+
+            const img = document.createElement('img');
+
+            img.src = src;
+
+            img.className = 'w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 cursor-pointer';
+
+            img.onclick = () => window.open(src, '_blank');
+
+            
+
+            const overlay = document.createElement('div');
+
+            overlay.className = 'absolute inset-0 bg-black/20 group-hover:bg-black/0 transition-all duration-300 pointer-events-none';
+
+            
+
+            container.appendChild(img);
+
+            container.appendChild(overlay);
+
+            galleryGrid.appendChild(container);
+
+        });
+
+        modalGallery.classList.remove('hidden');
+
+    } else {
+
+        modalGallery.classList.add('hidden');
+
+    }
+
+
+
+    // Show modal
+
+    modal.classList.remove('opacity-0', 'pointer-events-none');
+
+    modal.classList.add('opacity-100');
+
+    modalContent.classList.remove('-translate-y-4', 'opacity-0');
+
+    modalContent.classList.add('translate-y-0', 'opacity-100');
+
+  }
+
+
+
+  function closeModal() {
+
+    modal.classList.remove('opacity-100');
+
+    modal.classList.add('opacity-0', 'pointer-events-none');
+
+    modalContent.classList.remove('translate-y-0', 'opacity-100');
+
+    modalContent.classList.add('-translate-y-4', 'opacity-0');
+
+  }
+
+
+
+  serviceButtons.forEach(button => {
+
+    button.addEventListener('click', () => {
+
+      const serviceId = button.dataset.modalTarget;
+
+      openModal(serviceId);
+
+    });
+
+  });
+
+
+
+  closeButtons.forEach(button => {
+
+    button.addEventListener('click', closeModal);
+
+  });
+
+
+
+  modal.addEventListener('click', (e) => {
+
+    if (e.target === modal) closeModal();
+
+  });
+
+
+
+  document.addEventListener('keydown', (e) => {
+
+    if (e.key === 'Escape' && modal.classList.contains('opacity-100')) {
+
+      closeModal();
+
+    }
+
+  });
+
+</script>
+
+
+
+<div class="w-full relative overflow-hidden bg-cover bg-center" style="background-image: url('./background/darker.jpg');">
+
+    
+
+    <div class="absolute inset-0"></div>
+
+
+
+    <div class="relative z-10">
+
+        <section id="team" class="py-16 lg:py-24 text-center text-white">
+
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <h2 class="text-4xl md:text-5xl font-bold text-yellow-500 uppercase mb-16">
+
+                    Our Team
+
+                </h2>
+
+                <div id="team-cards-container" class="grid grid-cols-1 md:grid-cols-3 gap-8 justify-items-center">
+
+                    <!-- Team members will be dynamically loaded here from Supabase via loadTeamMembers() -->
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <section id="portfolio" class="portfolio py-16 lg:py-24 text-center text-white">
+
+            <div class="secction-title max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+                <h2 class="text-4xl md:text-5xl font-bold text-yellow-500 uppercase mb-12">
+
+                    OUR <br> PORTFOLIO
+
+                </h2>
+
+
+
+                <div class="mb-16">
+
+                    <h3 class="text-2xl font-bold text-white mb-6 text-left border-l-4 border-yellow-500 pl-4 uppercase tracking-wider">Meedish Projects</h3>
+
+                    <div class="portfolio-scroll-container overflow-hidden relative">
+
+                        <div id="portfolio-grid-meedish" class="portfolio-grid flex space-x-8 animate-slide-loop">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="mb-16">
+
+                    <h3 class="text-2xl font-bold text-white mb-6 text-left border-l-4 border-yellow-500 pl-4 uppercase tracking-wider">Meedish & Gavity</h3>
+
+                    <div class="portfolio-scroll-container overflow-hidden relative">
+
+                        <div id="portfolio-grid-gravity" class="portfolio-grid flex space-x-8 animate-slide-loop">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="mb-8">
+
+                    <h3 class="text-2xl font-bold text-white mb-6 text-left border-l-4 border-yellow-500 pl-4 uppercase tracking-wider">Meedish & Globyte</h3>
+
+                    <div class="portfolio-scroll-container overflow-hidden relative">
+
+                        <div id="portfolio-grid-globyte" class="portfolio-grid flex space-x-8 animate-slide-loop">
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+
+
+        <!-- ===== PLATFORMS SECTION ===== -->
+        <section id="platforms" class="py-16 lg:py-24 text-center text-white relative overflow-hidden">
+
+          <!-- Section header band -->
+          <div class="w-full bg-zinc-900 text-center py-14 relative overflow-hidden mb-12">
+            <div class="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_#eab308,_transparent)]"></div>
+            <h2 class="text-5xl md:text-7xl font-bold text-yellow-500 uppercase tracking-tighter relative z-10">
+              OUR <br> PLATFORMS
+            </h2>
+            <p class="mt-4 text-gray-400 text-lg relative z-10">Explore our specialized digital platforms</p>
+          </div>
+
+          <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+
+            <!-- Card 1: ETHIOTOP100 Music Chart -->
+            <a href="./music chart/index.html" id="platform-music-chart"
+               class="group relative flex flex-col items-start justify-between h-72 rounded-3xl border-2 border-yellow-500/40 overflow-hidden shadow-2xl hover:border-yellow-500 transition-all duration-400 hover:-translate-y-2 hover:shadow-yellow-500/20 bg-zinc-900 p-8 text-left">
+              <!-- Background gradient -->
+              <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-yellow-950/30 to-zinc-900 group-hover:from-zinc-800 group-hover:via-yellow-900/20 transition-all duration-500"></div>
+              <!-- Decorative cassette icon -->
+              <div class="absolute top-4 right-4 opacity-10 group-hover:opacity-20 transition-opacity duration-300">
+                <svg viewBox="0 0 100 56" class="w-28 h-16 text-yellow-400" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                  <rect x="2" y="2" width="96" height="52" rx="6"/><rect x="18" y="8" width="64" height="14" rx="2" opacity="0.4"/>
+                  <circle cx="32" cy="38" r="9"/><circle cx="68" cy="38" r="9"/>
+                  <line x1="32" y1="32" x2="32" y2="44"/><line x1="26" y1="38" x2="38" y2="38"/>
+                  <line x1="68" y1="32" x2="68" y2="44"/><line x1="62" y1="38" x2="74" y2="38"/>
+                </svg>
+              </div>
+              <div class="relative z-10">
+                <span class="inline-block text-xs font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-3 py-1 uppercase tracking-widest mb-4">Music Chart</span>
+                <h3 class="text-3xl font-black text-white uppercase tracking-tight leading-tight mb-2">
+                  ETHIO<span class="text-yellow-400">TOP</span>100
+                </h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Ethiopian music charts — weekly, monthly, yearly & all-time top tracks with artist bios.</p>
+              </div>
+              <div class="relative z-10 flex items-center gap-2 text-yellow-400 font-bold text-sm group-hover:gap-3 transition-all duration-200">
+                <span>Explore Charts</span>
+                <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+              </div>
+            </a>
+
+            <!-- Card 2: Meedish Machinery -->
+            <a href="./meedish-machinery-main/index.html" id="platform-machinery"
+               class="group relative flex flex-col items-start justify-between h-72 rounded-3xl border-2 border-yellow-500/40 overflow-hidden shadow-2xl hover:border-yellow-500 transition-all duration-400 hover:-translate-y-2 hover:shadow-yellow-500/20 bg-zinc-900 p-8 text-left">
+              <!-- Background gradient -->
+              <div class="absolute inset-0 bg-gradient-to-br from-zinc-900 via-amber-950/20 to-zinc-900 group-hover:from-zinc-800 group-hover:via-amber-900/15 transition-all duration-500"></div>
+              <!-- Decorative gear icon -->
+              <div class="absolute top-4 right-4 opacity-10 group-hover:opacity-20 transition-opacity duration-300 group-hover:rotate-12 transition-transform duration-700">
+                <i class="fas fa-cogs text-8xl text-yellow-400"></i>
+              </div>
+              <div class="relative z-10">
+                <span class="inline-block text-xs font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/30 rounded-full px-3 py-1 uppercase tracking-widest mb-4">Marketplace</span>
+                <h3 class="text-3xl font-black text-white uppercase tracking-tight leading-tight mb-2">
+                  Meedish <span class="text-yellow-400">Machinery</span>
+                </h3>
+                <p class="text-gray-400 text-sm leading-relaxed">Browse and rent industrial machinery. Connect buyers, sellers, and renters on one platform.</p>
+              </div>
+              <div class="relative z-10 flex items-center gap-2 text-yellow-400 font-bold text-sm group-hover:gap-3 transition-all duration-200">
+                <span>Browse Machinery</span>
+                <i class="fas fa-arrow-right text-xs group-hover:translate-x-1 transition-transform"></i>
+              </div>
+            </a>
+
+          </div>
+        </section>
+        <!-- ===== END PLATFORMS SECTION ===== -->
+
+        <section class="bg-gradient-to-b from-gray-900 via-gray-800 to-gray-900 py-16">
+
+          <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+
+            <header id="contact" class="text-center mb-8">
+
+              <h1 class="text-3xl md:text-5xl font-bold text-white uppercase tracking-wider">GET IN TOUCH</h1>
+
+              <p class="mt-4 text-gray-300 max-w-2xl mx-auto">
+
+                Have a project in mind or need design solutions? Reach out to us and let's create something amazing together.
+
+              </p>
+
+            </header>
+
+
+
+            <div class="bg-white rounded-2xl shadow-2xl overflow-hidden mx-auto max-w-4xl">
+
+              <div class="flex flex-col md:flex-row">
+
+                <div class="md:w-2/3 p-6 md:p-10">
+
+                  <h2 class="text-yellow-500 font-semibold mb-4">Send us a message</h2>
+
+                  <form id="contactForm" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+                    <input type="text" name="name" id="contactName" placeholder="Your Name" class="bg-gray-100 rounded-full px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+                    <input type="text" name="phone" id="contactPhone" placeholder="Your Phone" class="bg-gray-100 rounded-full px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+                    <input type="email" name="email" id="contactEmail" placeholder="Your Email" class="bg-gray-100 rounded-full px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+                    <input type="text" name="subject" id="contactSubject" placeholder="Subject" class="bg-gray-100 rounded-full px-4 py-3 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400">
+
+                    <textarea name="message" id="contactMessage" placeholder="Your Message" class="sm:col-span-2 bg-gray-100 rounded-xl p-4 h-28 resize-none placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-yellow-400"></textarea>
+
+                    <div class="mt-4 flex items-center md:justify-start justify-center sm:col-span-2">
+
+                      <button type="submit" class="bg-black text-yellow-400 px-6 py-2 rounded-full shadow-sm hover:shadow-md transition">
+
+                        Send
+
+                      </button>
+
+                    </div>
+
+                  </form>
+
+                </div>
+
+                <aside class="md:w-1/3 bg-yellow-100 p-6 md:p-8 flex flex-col justify-center">
+
+                  <h3 class="font-bold text-gray-900 mb-3">Contact Info</h3>
+
+                  <a href="mailto:meedishllc@gmail.com" class="text-gray-800 text-sm hover:underline">meedishllc@gmail.com</a>
+
+                  <div class="mt-3 text-gray-800 text-sm space-y-1">
+
+                    <p>+1-720-229-3115</p>
+
+                    <p>+1-720-280-3704</p>
+
+                  </div>
+
+                  <p class="mt-3 text-gray-800 text-sm">Atlanta, GA</p>
+
+                  <div class="mt-3 text-gray-800 text-sm space-y-1">
+
+                    <p>+251911209694 </p>
+
+                    <p>+251911528703</p>
+
+                  </div>
+
+                  <p class="mt-3 text-gray-800 text-sm">Addis Ababa, Ethiopia</p>
+
+                  <div class="mt-5 flex items-center space-x-3">
+
+                    <a href="#" class="w-9 h-9 rounded-full bg-gray-800 text-white flex items-center justify-center hover:scale-105 transition"><i class="fab fa-tiktok"></i></a>
+
+                    <a href="#" class="w-9 h-9 rounded-full bg-gray-800 text-white flex items-center justify-center hover:scale-105 transition"><i class="fab fa-facebook-f"></i></a>
+
+                    <a href="#" class="w-9 h-9 rounded-full bg-gray-800 text-white flex items-center justify-center hover:scale-105 transition"><i class="fab fa-instagram"></i></a>
+
+                    <a href="https://www.etsy.com/shop/MeedishLLC" target="_blank" class="w-9 h-9 rounded-full bg-gray-800 text-white flex items-center justify-center hover:scale-105 transition"><i class="fas fa-shopping-cart"></i></a>
+
+                  </div>
+
+                </aside>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+
+        <footer class="bg-gray-950 text-gray-400 relative border-t border-gray-800">
+
+          <div class="bg-yellow-500 h-2 w-full"></div>
+
+          <div class="max-w-7xl mx-auto px-6 py-16 flex flex-col md:flex-row justify-between items-start gap-12">
+
+            
+
+            <!-- Logo Section -->
+
+            <div class="flex-1 space-y-6">
+
+              <div class="inline-block transition-transform hover:scale-105">
+
+                  <img src="./logo/meedishllc.png" alt="MEEDISH Logo" class="h-32 w-auto filter grayscale invert brightness-200" onerror="this.style.display='none'">
+
+              </div>
+
+              <p class="text-gray-400 text-base leading-relaxed max-w-xs">
+
+                Empowering businesses through cultural-centric design excellence and innovative digital solutions.
+
+              </p>
+
+            </div>
+
+
+
+            <!-- Links Section -->
+
+            <div class="flex-1 w-full md:w-auto">
+
+              <div>
+
+                <h3 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Navigation</h3>
+
+                <ul class="space-y-4">
+
+                  <li><a href="#home" class="hover:text-yellow-500 transition-colors">Home</a></li>
+
+                  <li><a href="#service" class="hover:text-yellow-500 transition-colors">Services</a></li>
+
+                  <li><a href="#portfolio" class="hover:text-yellow-500 transition-colors">Portfolio</a></li>
+
+                  <li><a href="admin.html" class="hover:text-yellow-500 transition-colors">Admin</a></li>
+
+                </ul>
+
+              </div>
+
+            </div>
+
+
+
+            <!-- Contact Section -->
+
+            <div class="flex-1 space-y-4">
+
+              <h3 class="text-white font-bold mb-6 uppercase tracking-wider text-sm">Location</h3>
+
+              <div class="space-y-2">
+
+                <p class="text-sm font-medium text-yellow-500">Wollosefer/Ethio-China Road/<br>Tebaber Berta Bldg, 3rd floor, 301-C</p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+          
+
+          <!-- Bottom Copyright -->
+
+          <div class="max-w-7xl mx-auto px-6 py-8 border-t border-gray-900 flex flex-col md:flex-row justify-between items-center gap-4 text-xs uppercase tracking-[0.2em]">
+
+            <p>&copy; 2026 MEEDISH LLC. All Rights Reserved.</p>
+
+            <div class="flex space-x-6">
+
+              <a href="#" class="hover:text-white">Privacy Policy</a>
+
+              <a href="#" class="hover:text-white">Terms of use</a>
+
+            </div>
+
+          </div>
+
+        </footer>
+
+
+
+    </div>
+
+</div>
+
+
+
+<script>
+
+    // Use shared Supabase client from supabase.js
+
+    // Function to get public URL from Supabase storage
+
+    function getPublicUrl(bucket, path) {
+
+        if (!path) return null;
+
+        
+
+        // Check if it's already a full URL
+
+        if (path.startsWith('http')) return path;
+
+        
+
+        try {
+
+            const { data } = supabaseClient.storage.from(bucket).getPublicUrl(path);
+
+            return data?.publicUrl || `https://via.placeholder.com/400x300/333/FFF?text=No+Image+Available`;
+
+        } catch (error) {
+
+            console.error('Error getting public URL:', error);
+
+            return `https://via.placeholder.com/400x300/333/FFF?text=Image+Error`;
+
+        }
+
+    }
+
+
+
+    // Function to handle Supabase errors
+
+    async function handleSupabaseError(error, context) {
+
+        console.error(`Error in ${context}:`, error);
+
+        
+
+        // Common error messages to help debug
+
+        if (error.message.includes('relation') && error.message.includes('does not exist')) {
+
+            console.log(`⚠️ Table might not exist. Please run the SQL scripts in admin panel first.`);
+
+        } else if (error.message.includes('JWT')) {
+
+            console.log(`⚠️ Invalid Supabase key. Check your API keys in Supabase Dashboard.`);
+
+        }
+
+        
+
+        return null;
+
+    }
+
+    // NOTE: Services are hardcoded in HTML with a modal system.
+    // They are managed via the admin panel (services table) but displayed
+    // as static buttons above. Dynamic loading was removed because
+    // there is no #services-container element in the DOM.
+
+// Load Team Members from Supabase - ANIMATED INTERACTION
+
+async function loadTeamMembers() {
+
+    const teamContainer = document.getElementById('team-cards-container');
+
+    teamContainer.innerHTML = '<div class="text-white">Loading team...</div>';
+
+    
+
+    try {
+
+        const { data: team, error } = await supabaseClient
+
+            .from('team')
+
+            .select('*')
+
+            .order('created_at', { ascending: true });
+
+
+
+        if (error) {
+
+            await handleSupabaseError(error, 'loadTeamMembers');
+
+            teamContainer.innerHTML = '<div class="text-white">No team members available yet.</div>';
+
+            return;
+
+        }
+
+
+
+        if (team && team.length > 0) {
+
+            teamContainer.innerHTML = '';
+
+            team.forEach(member => {
+
+                const memberCard = document.createElement('div');
+
+                memberCard.className = 'bg-gray-200 p-6 rounded-lg shadow-md text-center max-w-sm w-full team-member-card flex flex-col';
+
+                memberCard.dataset.memberId = member.id;
+
+                
+
+                const imageUrl = member.image 
+
+                    ? getPublicUrl('team', member.image)
+
+                    : 'https://via.placeholder.com/100x100/CCCCCC/FFFFFF?text=Team+Member';
+
+                
+
+                // 1. Create Portfolio Link (HIDDEN INITIALLY)
+
+                // We add 'hidden' and 'animate-fade-in' classes
+
+                const portfolioHtml = member.portfolio_link ? `
+
+                    <button class="portfolio-link-btn hidden text-gray-600 hover:text-yellow-600 font-bold text-sm transition-colors duration-200 flex items-center" data-portfolio-url="${member.portfolio_link}">
+
+                        View Portfolio <i class="fas fa-external-link-alt ml-2"></i>
+
+                    </button>
+
+                ` : ''; 
+
+
+
+                // 2. Create Read More Button
+
+                const readMoreHtml = member.full_description ? `
+
+                    <button class="read-more-btn text-gray-600 hover:text-yellow-600 font-bold text-sm transition-colors duration-200 flex items-center">
+
+                        <span class="btn-text">Read More</span>
+
+                        <svg class="w-4 h-4 ml-1 transform transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+
+                    </button>
+
+                ` : '';
+
+                
+
+                memberCard.innerHTML = `
+
+                    <div class="flex-grow">
+
+                        <img src="${imageUrl}" alt="${member.name}" class="rounded-full w-24 h-24 mx-auto mb-4 object-cover border-2 border-yellow-500">
+
+                        <h3 class="text-xl font-bold text-gray-800 mb-1">${member.name}</h3>
+
+                        <p class="text-yellow-500 font-semibold mb-4">${member.role}</p>
+
+                        
+
+                        <div class="text-left">
+
+                            <p class="description text-gray-600 mb-2 text-center">${member.short_description || 'No description available'}</p>
+
+                            
+
+                            <div class="full-description hidden text-gray-600 mb-4 text-center border-t border-gray-300 pt-2 mt-2">
+
+                                ${member.full_description || ''}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <div class="action-footer flex flex-row justify-center items-center w-full mt-4 pt-3 border-t border-gray-300/50 transition-all duration-300">
+
+                        ${readMoreHtml}
+
+                        ${portfolioHtml}
+
+                    </div>
+
+                `;
+
+                
+
+                teamContainer.appendChild(memberCard);
+
+            });
+
+
+
+            // Event Listeners
+
+            teamContainer.addEventListener('click', (e) => {
+
+                const card = e.target.closest('.team-member-card');
+
+                if (!card) return;
+
+                
+
+                // Handle Read More Toggle
+
+                const btn = e.target.closest('.read-more-btn');
+
+                
+
+                if (btn) {
+
+                    e.stopPropagation();
+
+                    const descriptionElement = card.querySelector('.description');
+
+                    const fullDescription = card.querySelector('.full-description');
+
+                    const btnText = btn.querySelector('.btn-text');
+
+                    const btnIcon = btn.querySelector('svg');
+
+                    const footer = card.querySelector('.action-footer');
+
+                    const portfolioBtn = card.querySelector('.portfolio-link-btn');
+
+                    
+
+                    if (fullDescription.classList.contains('hidden')) {
+
+                        // --- OPEN ACTION ---
+
+                        
+
+                        // 1. Show Description
+
+                        descriptionElement.classList.add('hidden');
+
+                        fullDescription.classList.remove('hidden');
+
+                        
+
+                        // 2. Change Button Text
+
+                        btnText.textContent = "Read Less";
+
+                        btnIcon.classList.add('rotate-180');
+
+
+
+                        // 3. ANIMATION LOGIC
+
+                        // Only do the split animation if a portfolio button actually exists
+
+                        if (portfolioBtn) {
+
+                            footer.classList.remove('justify-center');
+
+                            footer.classList.add('justify-between');
+
+                            
+
+                            portfolioBtn.classList.remove('hidden');
+
+                            // Add a small fade-in animation
+
+                            portfolioBtn.animate([
+
+                                { opacity: 0, transform: 'translateX(10px)' },
+
+                                { opacity: 1, transform: 'translateX(0)' }
+
+                            ], {
+
+                                duration: 300,
+
+                                fill: 'forwards'
+
+                            });
+
+                        }
+
+
+
+                    } else {
+
+                        // --- CLOSE ACTION ---
+
+                        
+
+                        // 1. Hide Description
+
+                        fullDescription.classList.add('hidden');
+
+                        descriptionElement.classList.remove('hidden');
+
+                        
+
+                        // 2. Change Button Text
+
+                        btnText.textContent = "Read More";
+
+                        btnIcon.classList.remove('rotate-180');
+
+
+
+                        // 3. REVERSE ANIMATION
+
+                        if (portfolioBtn) {
+
+                            portfolioBtn.classList.add('hidden');
+
+                            footer.classList.remove('justify-between');
+
+                            footer.classList.add('justify-center');
+
+                        }
+
+                    }
+
+                    
+
+                } else if (e.target.closest('.portfolio-link-btn')) {
+
+                    e.stopPropagation();
+
+                    const portfolioUrl = e.target.closest('.portfolio-link-btn').dataset.portfolioUrl;
+
+                    if (portfolioUrl) {
+
+                        window.open(portfolioUrl, '_blank');
+
+                    }
+
+                }
+
+            });
+
+        } else {
+
+            teamContainer.innerHTML = '<div class="text-white">No team members available. Add team members from admin panel.</div>';
+
+        }
+
+    } catch (error) {
+
+        console.error('Error loading team:', error);
+
+        teamContainer.innerHTML = '<div class="text-white">Error loading team members.</div>';
+
+    }
+
+}
+
+    // Load Portfolio from Hardcoded Categories
+
+async function loadPortfolio() {
+    // Initialize our category containers
+    const categories = {
+        meedish: {
+            gridId: 'portfolio-grid-meedish',
+            items: []
+        },
+        gravity: {
+            gridId: 'portfolio-grid-gravity',
+            items: []
+        },
+        globyte: {
+            gridId: 'portfolio-grid-globyte',
+            items: []
+        }
+    };
+
+    try {
+        const { data: portfolioItems, error } = await supabaseClient
+            .from('portfolio')
+            .select('*')
+            .order('created_at', { ascending: true });
+
+        if (error) throw error;
+
+        if (portfolioItems && portfolioItems.length > 0) {
+            portfolioItems.forEach(item => {
+                let cat = 'meedish';
+                let desc = item.description || '';
+                if (desc.includes('||CATEGORY||')) {
+                    const parts = desc.split('||CATEGORY||');
+                    item.description = parts[0];
+                    cat = parts[1];
+                }
+
+                if (categories[cat]) {
+                    categories[cat].items.push(item);
+                } else {
+                    categories.meedish.items.push(item);
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Error loading portfolio:', error);
+    }
+
+
+
+    // Helper function to create the card HTML
+
+    const createCard = (item) => {
+
+        const portfolioItem = document.createElement('div');
+
+        
+
+        const targetUrl = item.project_url && item.project_url !== 'about:blank' ? item.project_url : '#';
+
+        const iframeSrc = targetUrl === '#' ? 'about:blank' : targetUrl;
+
+        
+
+        portfolioItem.className = 'portfolio-card flex-shrink-0 w-[85vw]  md:w-[600px] flex flex-col gap-6 group';
+
+        
+
+// Generate preview content dynamically
+        let previewContent = '';
+        if (item.image) {
+            const imageUrl = getPublicUrl('portfolio', item.image);
+            previewContent = `<img src="${imageUrl}" alt="${item.title || 'Project'}" class="w-full h-full object-cover">`;
+        } else {
+            previewContent = `
+                <span class="text-gray-500 font-bold uppercase tracking-widest z-10 absolute">Preview Coming Soon</span>
+                <iframe 
+                    src="${iframeSrc}" 
+                    class="portfolio-iframe opacity-80" 
+                    scrolling="no" 
+                    loading="lazy"
+                    sandbox="allow-scripts allow-same-origin"
+                    style="${iframeSrc === 'about:blank' ? 'display:none;' : ''}">
+                </iframe>`;
+        }
+
+        portfolioItem.innerHTML = `
+
+            <div class="relative w-full h-[45vh]  rounded overflow-hidden shadow-2xl border border-gray-700 bg-gray-900 transition-all duration-500 group-hover:shadow-yellow-500/20 group-hover:-translate-y-2">
+
+                
+
+                <div class="portfolio-preview-container flex items-center justify-center bg-gray-800" style="height: 35vh; ">
+
+                    ${previewContent}
+
+                </div>
+
+
+
+                <a href="${targetUrl}" target="_blank" class="absolute inset-0 z-20 cursor-pointer"></a>
+
+                
+
+                <div class="absolute top-4 right-4 bg-yellow-500 text-black font-bold px-4 py-1 rounded-full opacity-0 transform translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 pointer-events-none">
+
+                    Visit Site <i class="fas fa-arrow-right ml-1"></i>
+
+                </div>
+
+            </div>
+
+
+
+            <div class="text-left px-2">
+
+                <a href="${targetUrl}" target="_blank" class="inline-flex items-center group-hover:text-yellow-500 transition-colors duration-300">
+
+                    <h3 class="text-3xl md:text-4xl font-extrabold text-white uppercase tracking-wide leading-none">
+
+                        ${item.title || 'Untitled Project'}
+
+                    </h3>
+
+                    <i class="fas fa-external-link-alt ml-3 text-gray-500 text-xl group-hover:text-yellow-500 transition-colors"></i>
+
+                </a>
+
+                
+
+                <p class="mt-3 text-gray-400 text-lg md:text-xl font-light leading-relaxed max-w-2xl border-l-2 border-yellow-500 pl-4">
+
+                    ${item.description || 'No description available for this project.'}
+
+                </p>
+
+            </div>
+
+        `;
+
+        return portfolioItem;
+
+    };
+
+
+
+    Object.keys(categories).forEach(catKey => {
+
+        const cat = categories[catKey];
+
+        const grid = document.getElementById(cat.gridId);
+
+        if(!grid) return;
+
+        
+
+        grid.style.gap = "4rem";
+
+        grid.innerHTML = '';
+
+        
+
+        cat.items.forEach(item => {
+
+            grid.appendChild(createCard(item));
+
+        });
+
+
+
+        // Duplicate items for seamless loop animation, ensure enough items to fill width
+
+        if (cat.items.length > 0) {
+
+            const currentItems = Array.from(grid.children);
+
+            // Duplicate 3 times to ensure the loop works seamlessly even with 1 item
+
+            for(let i=0; i<3; i++) {
+
+                currentItems.forEach(node => {
+
+                    grid.appendChild(node.cloneNode(true));
+
+                });
+
+            }
+
+        } else {
+
+            grid.innerHTML = '<div class="text-white">No portfolio items available.</div>';
+
+        }
+
+    });
+
+}
+
+    // Initialize everything when DOM is loaded
+
+    document.addEventListener('DOMContentLoaded', () => {
+
+        loadTeamMembers();
+
+        loadPortfolio();
+
+    });
+
+
+
+    // Contact Form Handler
+
+    const contactForm = document.getElementById('contactForm');
+
+    if (contactForm) {
+
+        contactForm.addEventListener('submit', function(event) {
+
+            event.preventDefault();
+
+            
+
+            const submitBtn = contactForm.querySelector('button[type="submit"]');
+
+            const originalBtnText = submitBtn.innerHTML;
+
+            
+
+            // Visual feedback
+
+            submitBtn.disabled = true;
+
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i> Sending...';
+
+            
+
+            const name = document.getElementById('contactName').value;
+
+            const email = document.getElementById('contactEmail').value;
+
+            const phone = document.getElementById('contactPhone').value;
+
+            const subject = document.getElementById('contactSubject').value || 'New Message from Website';
+
+            const message = document.getElementById('contactMessage').value;
+
+
+
+            const body = `You have a new message from your website contact form:\n
+
+Name: ${name}\n
+
+Email: ${email}\n
+
+Phone: ${phone}\n
+
+Message:\n${message}`;
+
+
+
+            const mailtoLink = `mailto:meedishllc@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+
+            
+
+            // Try to open mail client
+
+            setTimeout(() => {
+
+                window.location.href = mailtoLink;
+
+                
+
+                // Show success state
+
+                submitBtn.innerHTML = '<i class="fas fa-check mr-2"></i> Sent!';
+
+                submitBtn.classList.remove('bg-black', 'text-yellow-400');
+
+                submitBtn.classList.add('bg-green-500', 'text-white');
+
+                
+
+                // Reset after 3 seconds
+
+                setTimeout(() => {
+
+                    submitBtn.disabled = false;
+
+                    submitBtn.innerHTML = originalBtnText;
+
+                    submitBtn.classList.remove('bg-green-500', 'text-white');
+
+                    submitBtn.classList.add('bg-black', 'text-yellow-400');
+
+                    contactForm.reset();
+
+                }, 3000);
+
+            }, 800);
+
+        });
+
+    }
+
+</script>
+
+
+
+</body>
+
+</html>
