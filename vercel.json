@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "meedish-machinery-main/api/config.js", "use": "@vercel/node" },
+    { "src": "**", "use": "@vercel/static" }
+  ],
+  "routes": [
+    { "src": "/api/config", "dest": "/meedish-machinery-main/api/config.js" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
+}
