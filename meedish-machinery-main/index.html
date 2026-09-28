@@ -694,7 +694,7 @@
         <div class="max-w-7xl mx-auto px-4 text-center md:text-left grid md:grid-cols-4 gap-8">
             <div class="col-span-1 md:col-span-2">
                 <div class="flex items-center space-x-3 mb-4">
-                    <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo"
+                    <img src="logo/gear-icon.jpg" alt="Meedish Machinery Logo"
                         class="w-10 h-10 rounded-lg object-cover" />
                     <h3 class="font-heading font-bold text-2xl text-white">
                         <span class="translate-content" data-i18n="site_name">Meedish</span><span
@@ -1050,7 +1050,7 @@
 
                 // Apply filters
                 if (currentListingType !== 'all') {
-                    query = query.ilike('listing_type', currentListingType);
+                    query = query.in('listing_type', [currentListingType, 'both']);
                 }
 
                 if (currentCategory !== 'all') {
@@ -1124,8 +1124,9 @@
 
                 machinesToDisplay.forEach(m => {
                     const isRent = m.listing_type?.toLowerCase() === 'rent';
-                    const badgeColor = isRent ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
-                    const badgeText = isRent ? 'RENT' : 'SALE';
+                    const isBoth = m.listing_type?.toLowerCase() === 'both';
+                    const badgeColor = isBoth ? 'bg-purple-100 text-purple-800' : isRent ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800';
+                    const badgeText = isBoth ? 'RENT & SALE' : isRent ? 'RENT' : 'SALE';
 
                     // Determine status badge
                     const status = m.status || 'available';
@@ -1162,7 +1163,12 @@
                                     <h3 class="text-xl font-heading font-bold text-gray-900 line-clamp-1">${m.name}</h3>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-lg font-bold text-industrial-orange">ETB ${m.price.toLocaleString()}<span class="text-xs font-normal text-gray-400">/hr</span></p>
+                                    ${m.listing_type === 'both' ? `
+                                        <p class="text-sm font-bold text-industrial-orange">Rent: ETB ${m.price.toLocaleString()}/hr</p>
+                                        <p class="text-sm font-bold text-industrial-orange">Sale: ETB ${(m.common_details?.sale_price || m.price).toLocaleString()}</p>
+                                    ` : `
+                                        <p class="text-lg font-bold text-industrial-orange">ETB ${m.price.toLocaleString()}<span class="text-xs font-normal text-gray-400">${m.listing_type === 'rent' ? '/hr' : ''}</span></p>
+                                    `}
                                 </div>
                             </div>
                             
@@ -1276,7 +1282,7 @@
 
                 // Create modal content
                 const modalContent = `
-            <div class="fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50 modal-overlay backdrop-blur-sm transition-opacity duration-300" >
+            <div class="fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50 modal-overlay backdrop-blur-sm transition-opacity duration-300" onclick="if(event.target === this) closeDetails()">
                 <div class="bg-white max-w-5xl w-full rounded-2xl relative max-h-[90vh] overflow-y-auto shadow-2xl animate-slide-up modal-content" onclick="event.stopPropagation()">
                     <button onclick="closeDetails()" class="absolute top-4 right-4 z-[60] bg-white/90 rounded-full p-2 hover:bg-gray-100 transition shadow-md cursor-pointer">&times;</button>
 
@@ -1293,8 +1299,13 @@
                                 </div>
                             </div>
                             <div class="text-right mt-4 md:mt-0">
-                                <p class="text-3xl font-bold mr-14 text-industrial-orange">ETB ${machine.price.toLocaleString()}</p>
-                                <p class="text-sm text-gray-500">${machine.listing_type === 'rent' ? '' : 'Fixed Price'}</p>
+                                ${machine.listing_type === 'both' ? `
+                                    <p class="text-xl font-bold mr-14 text-industrial-orange">Rent: ETB ${machine.price.toLocaleString()} / hr</p>
+                                    <p class="text-xl font-bold mr-14 text-industrial-orange">Sale: ETB ${(machine.common_details?.sale_price || machine.price).toLocaleString()}</p>
+                                ` : `
+                                    <p class="text-3xl font-bold mr-14 text-industrial-orange">ETB ${machine.price.toLocaleString()} ${machine.listing_type === 'rent' ? '/ hr' : ''}</p>
+                                    <p class="text-sm text-gray-500">${machine.listing_type === 'rent' ? 'Rental' : 'Fixed Price'}</p>
+                                `}
                             </div>
                         </div>
 
@@ -1433,10 +1444,14 @@
                                     ${(() => {
                         const btnState = machine.status === 'rented' || machine.status === 'sold'
                             ? { text: machine.status === 'rented' ? 'Rented Out' : 'Sold Out', disabled: true, cls: 'bg-gray-300 text-gray-500 cursor-not-allowed' }
-                            : { text: machine.listing_type === 'rent' ? 'Rent Now' : machine.listing_type === 'sale' ? 'Buy Now' : 'Inquire Now', disabled: false, cls: 'bg-industrial-yellow hover:bg-orange-500 text-gray-900 shadow-lg hover:shadow-xl transform hover:-translate-y-1' };
+                            : { 
+                                text: machine.listing_type === 'both' ? (currentListingType === 'rent' ? 'Rent Now' : 'Buy Now') : (machine.listing_type === 'rent' ? 'Rent Now' : 'Buy Now'),
+                                disabled: false,
+                                cls: 'bg-industrial-yellow hover:bg-orange-500 text-gray-900 shadow-lg hover:shadow-xl transform hover:-translate-y-1'
+                            };
 
                         return `
-                                                    <button onclick="${btnState.disabled ? '' : `addToCart('${machine.id}')`}"
+                                                    <button onclick="${btnState.disabled ? '' : `addToCart('${machine.id}', '${currentListingType}')`}"
                                                         class="w-full py-4 ${btnState.cls} font-bold rounded-xl transition-all duration-300 mb-3" ${btnState.disabled ? 'disabled' : ''}>
                                                         ${btnState.text}
                                                     </button>
@@ -1453,14 +1468,7 @@
                                     </button>
                                 </div>
 
-                                <!-- Price Intelligence -->
-                                <div class="price-intelligence p-5 rounded-xl border-l-4 border-blue-500 bg-blue-50/50">
-                                    <h4 class="font-bold mb-2 text-blue-900 flex items-center"><i class="fas fa-chart-line mr-2"></i> Price Intelligence</h4>
-                                    <p class="text-sm text-blue-800 mb-2">Similar machines rent for <span class="font-bold">ETB ${(parseFloat(machine.price) * 0.9).toFixed(0)} - ETB ${(parseFloat(machine.price) * 1.1).toFixed(0)}</span> per hour</p>
-                                    <p class="text-xs text-blue-600 flex items-center">
-                                        <i class="fas fa-eye mr-1"></i> ${machine.view_count || 0} views this month
-                                    </p>
-                                </div>
+
                             </div>
                         </div>
                     </div>
@@ -1684,7 +1692,7 @@
         }
 
         // ========== CART FUNCTIONS ==========
-        async function addToCart(machineId) {
+        async function addToCart(machineId, intendedType = null) {
             try {
                 const { data: machine, error } = await supabase
                     .from('machines')
@@ -1703,12 +1711,22 @@
                     return;
                 }
 
+                // Determine if this is a rental or purchase
+                const actualListingType = machine.listing_type || 'rent';
+                const isRental = intendedType === 'rent' || (actualListingType === 'rent') || (actualListingType === 'both' && currentListingType === 'rent');
+                
+                // If they are buying a "both" machine, use the sale price
+                let finalPrice = machine.price;
+                if (!isRental && actualListingType === 'both' && machine.common_details?.sale_price) {
+                    finalPrice = machine.common_details.sale_price;
+                }
+
                 const cartItem = {
                     machineId: machine.id,
                     machine: {
                         id: machine.id,
                         name: machine.name,
-                        price: machine.price,
+                        price: finalPrice,
                         listing_type: machine.listing_type,
                         partner_id: machine.partner_id || null
                     },
@@ -1716,7 +1734,7 @@
                     addedAt: new Date().toISOString()
                 };
 
-                if (machine.listing_type === 'rent') {
+                if (isRental) {
                     // For rentals, add duration
                     const today = new Date();
                     const tomorrow = new Date(today);
@@ -1855,9 +1873,10 @@
         }
 
     </script>
-    <div id="cartModal" class="hidden fixed inset-0 bg-black/70 flex justify-end z-50 transition-opacity duration-300">
-        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full"
-            id="cartContent">
+    <div id="cartModal" class="hidden fixed inset-0 bg-black/70 flex justify-end z-50 transition-opacity duration-300 modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'cartModal')">
+        <div class="bg-white w-full max-w-md h-full shadow-2xl flex flex-col transform transition-transform duration-300 translate-x-full modal-content"
+            id="cartContent" onclick="event.stopPropagation()">
             <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50">
                 <h2 class="text-2xl font-bold font-heading text-gray-800">Your Cart</h2>
                 <button onclick="closeCart()" class="text-gray-500 hover:text-red-500 transition-colors text-xl">
@@ -1941,7 +1960,7 @@
                         <button onclick="closeCart()" class="mt-4 text-industrial-blue underline">Continue Browsing</button>
                     </div>
                 `;
-                totalEl.textContent = '$0.00';
+                totalEl.textContent = 'ETB 0';
                 document.getElementById('checkoutBtn').disabled = true;
                 document.getElementById('checkoutBtn').classList.add('opacity-50', 'cursor-not-allowed');
                 return;
@@ -1966,7 +1985,7 @@
                             <h4 class="font-bold text-gray-800 line-clamp-1">${item.machine.name}</h4>
                             <p class="text-xs text-gray-500 mb-1">${item.isRental ? 'Rental' : 'Purchase'}</p>
                             <div class="flex justify-between items-center">
-                                <p class="text-industrial-orange font-bold">$${item.machine.price}</p>
+                                <p class="text-industrial-orange font-bold">ETB ${item.machine.price.toLocaleString()}</p>
                                 <span class="text-sm text-gray-600">x${item.quantity}</span>
                             </div>
                         </div>
@@ -1974,7 +1993,7 @@
                     `;
             }).join('');
 
-            totalEl.textContent = `$${total.toFixed(2)}`;
+            totalEl.textContent = `ETB ${total.toLocaleString()}`;
         }
 
         function removeFromCart(index) {
@@ -2013,7 +2032,10 @@
                     // Calculate totals from cart
                     const total = cart.reduce((sum, item) => sum + (item.machine.price * item.quantity), 0);
                     const priceDisplay = document.getElementById('originalPriceDisplay');
-                    if (priceDisplay) priceDisplay.textContent = `$${total.toFixed(2)}`;
+                    if (priceDisplay) priceDisplay.textContent = `ETB ${total.toLocaleString()}`;
+
+                    // Adjust modal for Rental vs Purchase
+                    adjustCheckoutModalForMode();
 
                     // Pre-fill user info if available
                     const user = JSON.parse(localStorage.getItem('current_admin_user') || localStorage.getItem('current_user') || 'null');
@@ -2154,11 +2176,6 @@
             }
         }
 
-        // Add to Cart Only (No auto-open)
-        async function openCompleteBookingModal(machineId) {
-            await addToCart(machineId);
-            // openCart(); // Removed as requested
-        }
 
         function closeCompleteBookingModal() {
             const modal = document.getElementById('completeBookingModal');
@@ -2185,6 +2202,81 @@
 
             document.querySelectorAll('.fuel-option').forEach(el => el.classList.remove('selected'));
             document.querySelectorAll('.delivery-option').forEach(el => el.classList.remove('selected'));
+        }
+
+        function adjustCheckoutModalForMode() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const isRental = cart.some(item => item.isRental !== false);
+
+            // Modal Title
+            const modalTitle = document.getElementById('checkoutModalTitle');
+            if (modalTitle) {
+                modalTitle.textContent = isRental ? 'Complete Your Rental Booking' : 'Complete Your Purchase';
+            }
+
+            // Step 2 Title & Descriptions
+            const step2Title = document.getElementById('step2Title');
+            if (step2Title) {
+                step2Title.textContent = isRental ? 'Counter Offer & Fuel Options' : 'Price Negotiation / Counter Offer';
+            }
+
+            const step2ProgressLabel = document.getElementById('step2ProgressLabel');
+            if (step2ProgressLabel) {
+                step2ProgressLabel.textContent = isRental ? 'Offer & Options' : 'Counter Offer';
+            }
+
+            const counterOfferDesc = document.getElementById('counterOfferDesc');
+            if (counterOfferDesc) {
+                counterOfferDesc.textContent = isRental
+                    ? "Suggest a different rental rate if you'd like to negotiate. The owner will review and respond."
+                    : "Suggest a different purchase price if you'd like to negotiate. The seller will review and respond.";
+            }
+
+            const counterOfferNotes = document.getElementById('counterOfferNotes');
+            if (counterOfferNotes) {
+                counterOfferNotes.placeholder = isRental
+                    ? "Explain your counter offer (e.g., long-term rental, multiple machinery hire, etc.)"
+                    : "Explain your counter offer (e.g., bulk purchase, immediate payment, etc.)";
+            }
+
+            // Fuel options section - hidden for buying!
+            const fuelSection = document.getElementById('fuelOptionsSection');
+            if (fuelSection) {
+                if (isRental) {
+                    fuelSection.classList.remove('hidden');
+                } else {
+                    fuelSection.classList.add('hidden');
+                    selectedFuelOption = null;
+                }
+            }
+
+            // Step 3 Delivery text
+            const deliverySiteDesc = document.getElementById('deliverySiteDesc');
+            if (deliverySiteDesc) {
+                deliverySiteDesc.textContent = isRental
+                    ? "We'll deliver and pick up from your location"
+                    : "We'll transport and deliver equipment directly to your site or facility";
+            }
+
+            // Step 4 Terms and Button
+            const termsAgreementLabel = document.getElementById('termsAgreementLabel');
+            if (termsAgreementLabel) {
+                termsAgreementLabel.innerHTML = isRental
+                    ? `I agree to the <a href="#" class="text-industrial-blue underline">Terms and Conditions</a> and understand that equipment must be returned in the same condition. I am responsible for any damages beyond normal wear and tear.`
+                    : `I agree to the <a href="#" class="text-industrial-blue underline">Terms and Conditions</a> and Sales Agreement for the purchase of this machinery. I understand the warranty and inspection policy.`;
+            }
+
+            const noticeText = document.getElementById('checkoutNoticeText');
+            if (noticeText) {
+                noticeText.textContent = isRental
+                    ? "By placing this rental booking, you agree to our Terms of Service. A representative will contact you shortly to confirm equipment availability, schedule delivery, and finalize payment."
+                    : "By placing this purchase order, you agree to our Terms of Sale. A representative will contact you shortly to coordinate equipment inspection, transfer documentation, and finalize payment.";
+            }
+
+            const submitBtnText = document.getElementById('submitButtonText');
+            if (submitBtnText) {
+                submitBtnText.textContent = isRental ? 'Confirm & Book Equipment' : 'Confirm & Place Purchase Order';
+            }
         }
 
         function showStep(stepNumber) {
@@ -2231,7 +2323,9 @@
             }
 
             if (currentStep === 2) {
-                if (!selectedFuelOption) {
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const isRental = cart.some(item => item.isRental !== false);
+                if (isRental && !selectedFuelOption) {
                     alert('Please select a fuel option');
                     return;
                 }
@@ -2295,9 +2389,10 @@
         }
 
         function generateOrderReview() {
-            // Modified to use CART data instead of currentMachineData
             const cart = JSON.parse(localStorage.getItem('cart') || '[]');
             if (cart.length === 0) return;
+
+            const isRental = cart.some(item => item.isRental !== false);
 
             const name = document.getElementById('bookingName').value;
             const email = document.getElementById('bookingEmail').value;
@@ -2320,28 +2415,38 @@
                         <div class="flex justify-between border-b border-gray-100 pb-2 mb-2 last:border-0">
                             <div>
                                 <span class="font-medium text-gray-800">${item.machine.name}</span>
-                                <div class="text-xs text-gray-500">x${item.quantity}</div>
+                                <div class="text-xs text-gray-500">${item.isRental ? 'Rental' : 'Purchase'} · x${item.quantity}</div>
                             </div>
-                            <span class="font-medium">$${(item.machine.price * item.quantity).toFixed(2)}</span>
+                            <span class="font-medium">ETB ${(item.machine.price * item.quantity).toLocaleString()}</span>
                         </div>
                     `).join('');
 
                 orderSummary.innerHTML = `
                         <div class="space-y-2">
                             ${itemsHtml}
-                            <div class="flex justify-between pt-2">
+                            <div class="flex justify-between pt-2 border-t border-gray-100">
                                 <span class="text-gray-600">Subtotal:</span>
-                                <span class="font-medium">$${finalPrice.toFixed(2)}</span>
+                                <span class="font-medium">ETB ${totalAmount.toLocaleString()}</span>
                             </div>
                             ${counterPrice ? `
-                                <div class="flex justify-between text-orange-600">
+                                <div class="flex justify-between text-orange-600 font-medium">
                                     <span>Counter Offer:</span>
-                                    <span class="font-medium">$${counterPrice}</span>
+                                    <span>ETB ${parseFloat(counterPrice).toLocaleString()}</span>
                                 </div>
                             ` : ''}
                             <div class="flex justify-between">
-                                <span class="text-gray-600">Fuel Option:</span>
-                                <span class="font-medium capitalize">${selectedFuelOption ? selectedFuelOption.replace('_', ' ') : 'None'}</span>
+                                <span class="text-gray-600">Order Type:</span>
+                                <span class="font-medium capitalize text-industrial-blue">${isRental ? 'Rental' : 'Direct Purchase'}</span>
+                            </div>
+                            ${isRental ? `
+                                <div class="flex justify-between">
+                                    <span class="text-gray-600">Fuel Option:</span>
+                                    <span class="font-medium capitalize">${selectedFuelOption ? selectedFuelOption.replace('_', ' ') : 'None'}</span>
+                                </div>
+                            ` : ''}
+                            <div class="flex justify-between pt-2 border-t border-gray-200 font-bold text-lg text-gray-900">
+                                <span>Estimated Total:</span>
+                                <span class="text-industrial-orange">ETB ${finalPrice.toLocaleString()}</span>
                             </div>
                         </div>
                     `;
@@ -2361,7 +2466,7 @@
 
             const deliveryInfo = document.getElementById('deliveryPaymentInfo');
             if (deliveryInfo) {
-                let html = `<div class="space-y-3"><div><p class="text-sm text-gray-600">Delivery Method</p><p class="font-medium capitalize">${selectedDeliveryOption}</p></div>`;
+                let html = `<div class="space-y-3"><div><p class="text-sm text-gray-600">Delivery Method</p><p class="font-medium capitalize">${selectedDeliveryOption === 'delivery' ? 'Delivery to Site' : 'Pickup at Location'}</p></div>`;
 
                 if (selectedDeliveryOption === 'delivery') {
                     const deliveryDate = document.getElementById('deliveryDate').value;
@@ -2379,11 +2484,14 @@
 
             const orderTotal = document.getElementById('orderTotal');
             if (orderTotal) {
-                orderTotal.textContent = `$${finalPrice.toFixed(2)}`;
+                orderTotal.textContent = `ETB ${finalPrice.toLocaleString()}`;
             }
         }
 
         async function submitBooking() {
+            const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+            const isRental = cart.some(item => item.isRental !== false);
+
             try {
                 const terms = document.getElementById('termsAgreement');
                 if (!terms || !terms.checked) {
@@ -2407,7 +2515,6 @@
                 const deliveryTime = document.getElementById('deliveryTime').value;
                 const deliveryInstructions = document.getElementById('deliveryInstructions').value;
 
-                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
                 const totalAmount = cart.reduce((sum, item) => sum + (item.machine.price * item.quantity), 0);
 
                 let finalPrice = totalAmount;
@@ -2431,8 +2538,9 @@
                     counter_offer_price: counterPrice ? parseFloat(counterPrice) : null,
                     counter_offer_notes: counterNotes || null,
                     final_price: finalPrice,
-                    fuel_option: selectedFuelOption,
+                    fuel_option: isRental ? selectedFuelOption : null,
                     delivery_option: selectedDeliveryOption,
+                    delivery_method: selectedDeliveryOption,
                     delivery_date: deliveryDate || null,
                     delivery_time: deliveryTime || null,
                     delivery_instructions: deliveryInstructions || null,
@@ -2448,10 +2556,6 @@
 
                 if (error) throw error;
 
-                // Machine Status update is now handled by Admin after approval/payment.
-                // We do NOT update it here anymore.
-
-
                 // Clear Cart
                 localStorage.removeItem('cart');
                 updateNavigationBadges();
@@ -2459,19 +2563,21 @@
                 // Refresh machine list to reflect status changes
                 await renderMachines();
 
-                alert(`✓ Booking Confirmed!\n\nOrder Number: ${orderNumber}\n\nWe'll contact you at ${email} with next steps.`);
+                const confirmMsg = isRental
+                    ? `✓ Rental Booking Confirmed!\n\nOrder Number: ${orderNumber}\n\nWe'll contact you at ${email} with delivery schedule and next steps.`
+                    : `✓ Purchase Order Placed!\n\nOrder Number: ${orderNumber}\n\nOur team will contact you at ${email} with equipment transfer documents and payment details.`;
+                alert(confirmMsg);
                 closeCompleteBookingModal();
-
-                // Refresh if needed or redirect
-                // window.location.reload(); 
 
             } catch (error) {
                 console.error('Booking submission error:', error);
-                alert(`Failed to submit booking: ${error.message}\n\nPlease try again or contact support.`);
+                alert('Error submitting order: ' + (error.message || 'Please try again.'));
             } finally {
                 const submitBtn = document.getElementById('submitButtonText');
                 const spinner = document.getElementById('loadingSpinner');
-                if (submitBtn) submitBtn.textContent = 'Confirm & Place Order';
+                if (submitBtn) {
+                    submitBtn.textContent = isRental ? 'Confirm & Book Equipment' : 'Confirm & Place Purchase Order';
+                }
                 if (spinner) spinner.classList.add('hidden');
             }
         }
@@ -2541,13 +2647,18 @@
                                                 <div class="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition-shadow">
                                                     <div class="relative h-48">
                                                         <img src="${mainImage}" alt="${machine.name}" class="w-full h-full object-cover">
-                                                        <span class="absolute top-2 left-2 ${isRent ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'} px-2 py-1 rounded-full text-xs font-bold">
-                                                            ${isRent ? 'RENT' : 'SALE'}
+                                                        <span class="absolute top-2 left-2 ${machine.listing_type === 'both' ? 'bg-purple-100 text-purple-800' : isRent ? 'bg-blue-100 text-blue-800' : 'bg-green-100 text-green-800'} px-2 py-1 rounded-full text-xs font-bold">
+                                                            ${machine.listing_type === 'both' ? 'RENT & SALE' : isRent ? 'RENT' : 'SALE'}
                                                         </span>
                                                     </div>
                                                     <div class="p-4">
                                                         <h3 class="font-bold text-lg text-gray-900 mb-2 line-clamp-1">${machine.name}</h3>
-                                                        <p class="text-2xl font-bold text-industrial-orange mb-4">ETB ${machine.price.toLocaleString()}</p>
+                                                        ${machine.listing_type === 'both' ? `
+                                                            <p class="text-lg font-bold text-industrial-orange mb-1">Rent: ETB ${machine.price.toLocaleString()} / hr</p>
+                                                            <p class="text-lg font-bold text-industrial-orange mb-4">Sale: ETB ${(machine.common_details?.sale_price || machine.price).toLocaleString()}</p>
+                                                        ` : `
+                                                            <p class="text-2xl font-bold text-industrial-orange mb-4">ETB ${machine.price.toLocaleString()} ${machine.listing_type === 'rent' ? '/ hr' : ''}</p>
+                                                        `}
                                                         <div class="flex gap-2">
                                                             <button onclick="openDetail('${machine.id}'); closeWishlistViewModal();" class="flex-1 bg-industrial-yellow hover:bg-orange-500 text-gray-900 py-2 rounded-lg font-medium transition-colors">
                                                                 View Details
@@ -2789,29 +2900,35 @@
             }
         }
 
-        function openCompleteBookingModal(machineId) {
+        async function openCompleteBookingModal(machineId) {
             // First add to cart
             if (machineId) {
-                addToCart(machineId);
+                await addToCart(machineId, currentListingType);
             }
 
             // Open the modal
             const modal = document.getElementById('completeBookingModal');
             if (modal) {
                 modal.classList.remove('hidden');
-                // Reset to step 1
+                modal.classList.add('flex');
+                resetBookingForm();
+
+                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+                const total = cart.reduce((sum, item) => sum + (item.machine.price * item.quantity), 0);
+                const priceDisplay = document.getElementById('originalPriceDisplay');
+                if (priceDisplay) priceDisplay.textContent = `ETB ${total.toLocaleString()}`;
+
+                adjustCheckoutModalForMode();
+
+                // Pre-fill user info if available
+                const user = JSON.parse(localStorage.getItem('current_admin_user') || localStorage.getItem('current_user') || 'null');
+                if (user) {
+                    if (document.getElementById('bookingName')) document.getElementById('bookingName').value = user.full_name || '';
+                    if (document.getElementById('bookingEmail')) document.getElementById('bookingEmail').value = user.email || '';
+                }
+
                 currentStep = 1;
                 showStep(1);
-                updateProgressBar();
-
-                // Populate initial data from cart if needed
-                const cart = JSON.parse(localStorage.getItem('cart') || '[]');
-                if (cart.length > 0) {
-                    // Pre-fill some info? e.g. calculated totals
-                    const total = cart.reduce((sum, item) => sum + (item.machine.price * item.quantity), 0);
-                    // Update UI with this info? 
-                    // The modal steps handle this dynamically usually.
-                }
             } else {
                 console.error("Booking modal element not found!");
             }
@@ -2931,32 +3048,6 @@
         window.updateWishlistBadge = updateWishlistBadge;
     </script>
 
-    <!-- Orders Modal -->
-    <div id="ordersModal"
-        class="hidden fixed inset-0 bg-black/60 flex justify-center items-center z-[60] p-4 modal-overlay"
-        onclick="closeModalOnOutsideClick(event, 'ordersModal')">
-        <div class="bg-white max-w-2xl w-full rounded-2xl relative shadow-2xl animate-slide-up max-h-[80vh] flex flex-col modal-content"
-            onclick="event.stopPropagation()">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50 rounded-t-2xl">
-                <h3 class="text-2xl font-bold font-heading text-gray-800">Your Orders</h3>
-                <button onclick="closeOrders()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
-            </div>
-
-            <div class="p-6 overflow-y-auto flex-1">
-                <div id="ordersContent" class="space-y-4"></div>
-
-                <div id="ordersEmpty" class="text-center py-12 hidden">
-                    <div class="text-4xl mb-4">📦</div>
-                    <h3 class="text-xl font-bold text-gray-800 mb-2">No Orders Yet</h3>
-                    <p class="text-gray-500">You haven't placed any orders yet.</p>
-                    <button onclick="closeOrders()"
-                        class="mt-4 px-6 py-2 bg-industrial-yellow text-gray-900 font-bold rounded-xl hover:bg-orange-500 transition-colors">
-                        Browse Machinery
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Wishlist Login Modal (Moved to root) -->
     <div id="wishlistLoginModal"
@@ -3003,26 +3094,34 @@
                 &times;
             </button>
             <div class="p-6 md:p-8">
-                <h2 class="font-heading text-2xl md:text-3xl font-bold mb-8 text-industrial-gray">
+                <h2 id="checkoutModalTitle" class="font-heading text-2xl md:text-3xl font-bold mb-8 text-industrial-gray">
                     Complete Your Booking
                 </h2>
 
-                <!-- Progress Steps - Now 3 steps instead of 4 -->
+                <!-- Progress Steps - 4 steps -->
                 <div class="flex items-center justify-between mb-10 relative">
                     <div class="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 -translate-y-1/2 z-0"></div>
                     <div class="absolute top-1/2 left-0 h-1 bg-industrial-yellow -translate-y-1/2 z-0" id="progressBar"
-                        style="width: 33%"></div>
+                        style="width: 0%"></div>
 
                     <div class="flex flex-col items-center relative z-10">
                         <div class="step-number active">1</div>
+                        <span class="text-xs text-gray-600 mt-1 font-medium hidden sm:block">Contact</span>
                     </div>
 
                     <div class="flex flex-col items-center relative z-10">
                         <div class="step-number">2</div>
+                        <span id="step2ProgressLabel" class="text-xs text-gray-600 mt-1 font-medium hidden sm:block">Offer & Options</span>
                     </div>
 
                     <div class="flex flex-col items-center relative z-10">
                         <div class="step-number">3</div>
+                        <span class="text-xs text-gray-600 mt-1 font-medium hidden sm:block">Delivery</span>
+                    </div>
+
+                    <div class="flex flex-col items-center relative z-10">
+                        <div class="step-number">4</div>
+                        <span class="text-xs text-gray-600 mt-1 font-medium hidden sm:block">Review</span>
                     </div>
                 </div>
 
@@ -3077,7 +3176,7 @@
 
                 <!-- Step 2: Counter Offer & Fuel Options -->
                 <div id="step2" class="space-y-6 hidden">
-                    <h3 class="font-heading text-xl font-bold text-industrial-gray mb-6">
+                    <h3 id="step2Title" class="font-heading text-xl font-bold text-industrial-gray mb-6">
                         Counter Offer & Options
                     </h3>
 
@@ -3086,8 +3185,8 @@
                         <div class="flex justify-between items-center">
                             <div>
                                 <p class="text-sm text-gray-600">Original Price</p>
-                                <p class="font-heading font-bold text-xl" id="originalPriceDisplay">
-                                    $0
+                                <p class="font-heading font-bold text-xl text-industrial-orange" id="originalPriceDisplay">
+                                    ETB 0
                                 </p>
                             </div>
                             <div class="text-industrial-yellow text-2xl">💰</div>
@@ -3100,7 +3199,7 @@
                             Counter Offer (Optional)
                         </h4>
                         <div class="bg-yellow-50 border-l-4 border-industrial-yellow p-4 rounded-r-xl mb-4">
-                            <p class="text-sm text-gray-700">
+                            <p id="counterOfferDesc" class="text-sm text-gray-700">
                                 Suggest a different price if you'd like to negotiate. The
                                 owner will review and respond.
                             </p>
@@ -3113,9 +3212,9 @@
                                     <span class="text-gray-500 text-sm">(Optional)</span>
                                 </label>
                                 <div class="relative">
-                                    <span class="absolute left-3 top-3 text-gray-500">$</span>
+                                    <span class="absolute left-3 top-3 text-gray-500 font-semibold text-sm">ETB</span>
                                     <input type="number" id="counterOfferPrice" placeholder="Enter your offer"
-                                        class="w-full pl-8 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200" />
+                                        class="w-full pl-14 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200" />
                                 </div>
                                 <p class="text-xs text-gray-500 mt-1" id="counterOfferNote"></p>
                             </div>
@@ -3132,7 +3231,7 @@
                     </div>
 
                     <!-- Fuel Options Section -->
-                    <div class="mb-6">
+                    <div id="fuelOptionsSection" class="mb-6">
                         <h4 class="font-heading font-bold text-lg mb-4">Fuel Options</h4>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -3253,7 +3352,7 @@
                                     <h4 class="font-heading font-bold text-lg mb-2">
                                         Delivery to Site
                                     </h4>
-                                    <p class="text-gray-600">
+                                    <p id="deliverySiteDesc" class="text-gray-600">
                                         We'll deliver and pick up from your location
                                     </p>
                                     <p class="text-sm text-gray-700 mt-2 font-medium">
@@ -3357,7 +3456,7 @@
 
                     <div class="flex items-start mt-6">
                         <input type="checkbox" id="termsAgreement" class="mt-1 mr-3" />
-                        <label for="termsAgreement" class="text-gray-700">
+                        <label id="termsAgreementLabel" for="termsAgreement" class="text-gray-700">
                             I agree to the
                             <a href="#" class="text-industrial-blue underline">Terms and Conditions</a>
                             and understand that equipment must be returned in the same
@@ -3369,7 +3468,7 @@
                         <div class="text-blue-500 mt-1">
                             <i class="fas fa-info-circle"></i>
                         </div>
-                        <p class="text-sm text-blue-700">
+                        <p id="checkoutNoticeText" class="text-sm text-blue-700">
                             By placing this order, you agree to our Terms of Service. A representative will contact you
                             shortly to confirm availability and finalize payment.
                         </p>
@@ -3484,17 +3583,24 @@
         // Improved closeModalOnOutsideClick function
         function closeModalOnOutsideClick(event, modalId) {
             // Check if click is directly on the overlay (not on modal content)
-            if (event.target.id === modalId || event.target.classList.contains('modal-overlay')) {
+            if (event.target.id === modalId || event.target.classList.contains('modal-overlay') || event.target === event.currentTarget) {
                 event.stopPropagation();
 
                 if (modalId === 'cartModal') {
                     closeCart();
                 } else if (modalId === 'ordersModal') {
+                    closeOrdersModal();
                     closeOrders();
+                } else if (modalId === 'emailModal') {
+                    closeEmailModal();
                 } else if (modalId === 'wishlistLoginModal') {
                     closeWishlistModal();
+                } else if (modalId === 'wishlistViewModal') {
+                    closeWishlistViewModal();
                 } else if (modalId === 'completeBookingModal') {
                     closeCompleteBookingModal();
+                } else if (modalId === 'inquiryModal') {
+                    closeInquiryModal();
                 } else {
                     closeModal(modalId);
                 }
@@ -3503,6 +3609,25 @@
 
         // Add event delegation for dynamic elements
         document.addEventListener('click', function (event) {
+            // Handle mobileMenu closing when clicking outside
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileMenuBtn = document.querySelector('button[onclick*="toggleMobileMenu"]');
+            if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+                if (!mobileMenu.contains(event.target) && (!mobileMenuBtn || !mobileMenuBtn.contains(event.target))) {
+                    mobileMenu.classList.add('hidden');
+                }
+            }
+
+            // Handle direct clicks on modal overlay backdrops
+            if (event.target.classList && event.target.classList.contains('modal-overlay') && !event.target.closest('.modal-content')) {
+                const targetId = event.target.id;
+                if (targetId) {
+                    closeModalOnOutsideClick(event, targetId);
+                } else {
+                    closeDetails();
+                }
+            }
+
             // Handle all X button clicks
             if (event.target.matches('button') &&
                 (event.target.innerHTML.includes('&times;') ||
@@ -3523,11 +3648,16 @@
                     if (modal.id === 'cartModal') {
                         closeCart();
                     } else if (modal.id === 'ordersModal') {
+                        closeOrdersModal();
                         closeOrders();
+                    } else if (modal.id === 'emailModal') {
+                        closeEmailModal();
                     } else if (modal.id === 'wishlistLoginModal') {
                         closeWishlistModal();
                     } else if (modal.id === 'completeBookingModal') {
                         closeCompleteBookingModal();
+                    } else if (modal.id === 'inquiryModal') {
+                        closeInquiryModal();
                     } else if (modal.classList.contains('modal-overlay')) {
                         closeDetail();
                     }
@@ -3537,13 +3667,19 @@
             // Handle Escape key
             document.addEventListener('keydown', function (e) {
                 if (e.key === 'Escape') {
+                    // Close mobile menu if open
+                    const mm = document.getElementById('mobileMenu');
+                    if (mm) mm.classList.add('hidden');
+
                     // Close any open modal
                     const openModals = document.querySelectorAll('[id$="Modal"]:not(.hidden), .modal-overlay');
                     openModals.forEach(modal => {
                         if (modal.id === 'cartModal') closeCart();
-                        else if (modal.id === 'ordersModal') closeOrders();
+                        else if (modal.id === 'ordersModal') { closeOrdersModal(); closeOrders(); }
+                        else if (modal.id === 'emailModal') closeEmailModal();
                         else if (modal.id === 'wishlistLoginModal') closeWishlistModal();
                         else if (modal.id === 'completeBookingModal') closeCompleteBookingModal();
+                        else if (modal.id === 'inquiryModal') closeInquiryModal();
                         else if (modal.classList.contains('modal-overlay')) closeDetail();
                     });
                 }
@@ -3725,8 +3861,9 @@
     </div>
 
     <!-- Email Collection Modal -->
-    <div id="emailModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-[999]">
-        <div class="bg-white max-w-md w-full p-8 rounded-3xl shadow-2xl relative">
+    <div id="emailModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-[999] modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'emailModal')">
+        <div class="bg-white max-w-md w-full p-8 rounded-3xl shadow-2xl relative modal-content" onclick="event.stopPropagation()">
             <h3 class="text-2xl font-heading font-bold mb-4 text-gray-800">Track Your Orders</h3>
             <p class="text-gray-600 mb-6">Enter your email to view your order history and status</p>
 
@@ -3759,9 +3896,10 @@
     </div>
 
     <!-- Orders Display Modal -->
-    <!-- Orders Display Modal -->
-    <div id="ordersModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-[999]">
-        <div class="bg-white max-w-4xl w-full rounded-3xl shadow-2xl relative my-8 flex flex-col max-h-[90vh]">
+    <div id="ordersModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-[999] modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'ordersModal')">
+        <div class="bg-white max-w-4xl w-full rounded-3xl shadow-2xl relative my-8 flex flex-col max-h-[90vh] modal-content"
+            onclick="event.stopPropagation()">
 
             <!-- Fixed Header -->
             <div class="p-8 border-b border-gray-100 flex-shrink-0 relative">

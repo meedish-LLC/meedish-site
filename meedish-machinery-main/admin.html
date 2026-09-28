@@ -472,82 +472,36 @@
         }
 
         /* ── Unified Language Switcher (Pill Dropdown) ── */
-        .admin-lang-switcher {
-            position: relative;
-            display: inline-block;
-        }
-
+        .admin-lang-switcher { position: relative; display: inline-block; }
         .lang-pill-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
+            display: flex; align-items: center; gap: 6px;
             padding: 7px 12px;
             background: white;
             border: 1.5px solid #e5e7eb;
             border-radius: 999px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
+            cursor: pointer; font-size: 13px; font-weight: 600; color: #374151;
             transition: all 0.2s;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            box-shadow: 0 1px 4px rgba(0,0,0,.06);
         }
-
-        .lang-pill-btn:hover {
-            border-color: #FFB347;
-            background: #fffbeb;
-        }
-
+        .lang-pill-btn:hover { border-color: #FFB347; background: #fffbeb; }
         .lang-pill-dropdown {
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            background: white;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
-            min-width: 150px;
-            overflow: hidden;
-            display: none;
-            animation: fadeSlideDown .18s ease-out;
-            z-index: 200;
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: white; border: 1.5px solid #e5e7eb;
+            border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.1);
+            min-width: 150px; overflow: hidden; display: none;
+            animation: fadeSlideDown .18s ease-out; z-index: 200;
         }
-
-        .lang-pill-dropdown.show {
-            display: block;
-        }
-
+        .lang-pill-dropdown.show { display: block; }
         .lang-pill-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #374151;
-            transition: background .15s;
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px; cursor: pointer; font-size: 14px;
+            color: #374151; transition: background .15s;
         }
-
-        .lang-pill-option:hover {
-            background: #f9fafb;
-        }
-
-        .lang-pill-option.active {
-            background: #fffbeb;
-            color: #d97706;
-            font-weight: 700;
-        }
-
+        .lang-pill-option:hover { background: #f9fafb; }
+        .lang-pill-option.active { background: #fffbeb; color: #d97706; font-weight: 700; }
         @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity:0; transform:translateY(-6px); }
+            to   { opacity:1; transform:translateY(0); }
         }
     </style>
 </head>
@@ -577,8 +531,7 @@
                     <label class="text-xs font-bold text-gray-500 uppercase tracking-wider ml-1 translate-content"
                         data-i18n="username">Email / Username</label>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                class="fas fa-envelope"></i></span>
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-envelope"></i></span>
                         <input type="text" id="username" required
                             class="w-full pl-11 pr-5 py-3.5 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all font-medium"
                             placeholder="your@email.com">
@@ -588,18 +541,14 @@
                     <div class="flex justify-between items-center ml-1">
                         <label class="text-xs font-bold text-gray-500 uppercase tracking-wider translate-content"
                             data-i18n="password">Password</label>
-                        <button type="button" onclick="openForgotPassword()"
-                            class="text-xs text-industrial-yellow hover:text-industrial-orange font-semibold transition-colors">Forgot
-                            Password?</button>
+                        <button type="button" onclick="openForgotPassword()" class="text-xs text-industrial-yellow hover:text-industrial-orange font-semibold transition-colors">Forgot Password?</button>
                     </div>
                     <div class="relative">
-                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                class="fas fa-lock"></i></span>
+                        <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
                         <input type="password" id="password" required
                             class="w-full pl-11 pr-12 py-3.5 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all font-medium"
                             placeholder="••••••••">
-                        <button type="button" onclick="togglePasswordVisibility('password', 'loginEyeIcon')"
-                            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
+                        <button type="button" onclick="togglePasswordVisibility('password', 'loginEyeIcon')" class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors">
                             <i id="loginEyeIcon" class="fas fa-eye"></i>
                         </button>
                     </div>
@@ -608,8 +557,7 @@
                 <div id="loginError"
                     class="hidden p-4 rounded-xl bg-red-50 border border-red-100 text-red-600 text-sm flex items-center">
                     <i class="fas fa-exclamation-circle mr-3 text-lg flex-shrink-0"></i>
-                    <span class="font-semibold translate-content" data-i18n="login_failed">Invalid credentials. Try
-                        again.</span>
+                    <span class="font-semibold translate-content" data-i18n="login_failed">Invalid credentials. Try again.</span>
                 </div>
 
                 <button type="submit"
@@ -620,14 +568,11 @@
             </form>
 
             <div class="mt-6 text-center border-t border-gray-100 pt-6 flex flex-col gap-3">
-                <a href="signup.html"
-                    class="inline-flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-industrial-orange font-semibold transition-colors">
+                <a href="signup.html" class="inline-flex items-center justify-center gap-2 text-sm text-gray-600 hover:text-industrial-orange font-semibold transition-colors">
                     <i class="fas fa-user-plus"></i>
                     <span class="translate-content" data-i18n="signup_link">Create Partner Account</span>
                 </a>
-                <a href="index.html"
-                    class="text-xs text-gray-400 hover:text-industrial-orange transition-colors translate-content"
-                    data-i18n="back_to_home">
+                <a href="index.html" class="text-xs text-gray-400 hover:text-industrial-orange transition-colors translate-content" data-i18n="back_to_home">
                     ← Back to Home
                 </a>
             </div>
@@ -635,16 +580,14 @@
     </div>
 
     <!-- Forgot Password Modal -->
-    <div id="forgotPasswordModal"
-        class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 relative">
-            <button onclick="closeForgotPassword()"
-                class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
+    <div id="forgotPasswordModal" class="hidden fixed inset-0 z-[70] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'forgotPasswordModal')">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8 relative modal-content" onclick="event.stopPropagation()">
+            <button onclick="closeForgotPassword()" class="absolute top-4 right-4 w-8 h-8 rounded-full bg-gray-100 hover:bg-gray-200 flex items-center justify-center text-gray-500 transition-colors">
                 <i class="fas fa-times text-sm"></i>
             </button>
             <div class="text-center mb-6">
-                <div
-                    class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 mb-4">
+                <div class="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-blue-50 text-blue-500 mb-4">
                     <i class="fas fa-key text-2xl"></i>
                 </div>
                 <h3 class="text-xl font-bold text-gray-900">Reset Password</h3>
@@ -653,17 +596,14 @@
             <div id="forgotPasswordMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
             <div class="space-y-4">
                 <div class="relative">
-                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i
-                            class="fas fa-envelope"></i></span>
+                    <span class="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-envelope"></i></span>
                     <input type="email" id="forgotEmail" placeholder="your@email.com"
                         class="w-full pl-11 pr-4 py-3.5 rounded-2xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all font-medium">
                 </div>
-                <button onclick="sendPasswordReset()"
-                    class="w-full py-3.5 rounded-2xl bg-industrial-yellow hover:bg-industrial-orange text-gray-900 font-bold transition-all duration-200 flex items-center justify-center gap-2">
+                <button onclick="sendPasswordReset()" class="w-full py-3.5 rounded-2xl bg-industrial-yellow hover:bg-industrial-orange text-gray-900 font-bold transition-all duration-200 flex items-center justify-center gap-2">
                     <i class="fas fa-paper-plane"></i> Send Reset Link
                 </button>
-                <button onclick="closeForgotPassword()"
-                    class="w-full py-3 rounded-2xl border-2 border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold transition-all duration-200">
+                <button onclick="closeForgotPassword()" class="w-full py-3 rounded-2xl border-2 border-gray-200 hover:bg-gray-50 text-gray-600 font-semibold transition-all duration-200">
                     Cancel
                 </button>
             </div>
@@ -676,14 +616,13 @@
         <!-- Desktop Sidebar -->
         <aside class="hidden lg:flex w-72 bg-slate-900 text-white flex-col flex-shrink-0 z-20 shadow-2xl relative">
             <div class="h-20 flex items-center px-8 border-b border-slate-800 bg-slate-900">
-                <a href="index.html" title="Back to Home" class="flex items-center space-x-3">
-                    <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo"
-                        class="h-10 w-10 rounded-lg object-cover" />
-                    <div class="flex flex-col text-left justify-center">
-                        <span class="font-bold text-lg leading-none text-white">Meedish</span>
-                        <span class="font-bold text-lg leading-none text-yellow-500">Machinery</span>
-                    </div>
+                <a href="index.html" title="Back to Home">
+                    <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo" class="w-40 h-13 rounded-lg object-cover" />
                 </a>
+                <div class="flex flex-col text-left justify-center">
+                    <span class="font-extrabold text-lg md:text-xl leading-none text-gray-800">MEEDISH</span>
+                    <span class="font-bold text-lg md:text-xl leading-none text-yellow-500">MACHINERY</span>
+                </div>
             </div>
 
             <!-- Profile Widget -->
@@ -746,18 +685,14 @@
         </aside>
 
         <!-- Mobile Sidebar Overlay -->
-        <div id="mobileSidebar" class="lg:hidden fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+        <div id="mobileSidebar" class="lg:hidden fixed inset-0 z-50 hidden" onclick="toggleMobileMenu()">
+            <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"></div>
             <div
-                class="absolute left-0 top-0 h-full w-72 bg-slate-900 text-white shadow-2xl animate-slide-right flex flex-col border-r border-slate-800">
+                class="absolute left-0 top-0 h-full w-72 bg-slate-900 text-white shadow-2xl animate-slide-right flex flex-col border-r border-slate-800"
+                onclick="event.stopPropagation()">
                 <div class="h-20 flex items-center px-6 border-b border-slate-800">
-                    <a href="index.html" title="Back to Home" class="flex items-center space-x-2">
-                        <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo"
-                            class="h-10 w-10 rounded-lg object-cover" />
-                        <div class="flex flex-col text-left justify-center">
-                            <span class="font-bold text-base leading-none text-white">Meedish</span>
-                            <span class="font-bold text-base leading-none text-yellow-500">Machinery</span>
-                        </div>
+                    <a href="index.html" title="Back to Home">
+                        <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo" class="w-32 h-13 rounded-lg object-cover" />
                     </a>
                     <button onclick="toggleMobileMenu()"
                         class="ml-auto w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white"><i
@@ -816,11 +751,7 @@
                         <button class="lang-pill-btn" onclick="toggleAdminLangDropdown('adminMobileLangDropdown')">
                             <span id="adminMobileLangFlag">🇺🇸</span>
                             <span id="adminMobileLangLabel">EN</span>
-                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div class="lang-pill-dropdown" id="adminMobileLangDropdown">
                             <div class="lang-pill-option active" onclick="switchLanguage('en')" id="adminMobileOptEn">
@@ -853,11 +784,7 @@
                         <button class="lang-pill-btn" onclick="toggleAdminLangDropdown('adminDesktopLangDropdown')">
                             <span id="adminDesktopLangFlag">🇺🇸</span>
                             <span id="adminDesktopLangLabel">EN</span>
-                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div class="lang-pill-dropdown" id="adminDesktopLangDropdown">
                             <div class="lang-pill-option active" onclick="switchLanguage('en')" id="adminDesktopOptEn">
@@ -1231,8 +1158,7 @@
                         <!-- Change Profile Name -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow">
+                                <div class="w-10 h-10 rounded-xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow">
                                     <i class="fas fa-user"></i>
                                 </div>
                                 <div>
@@ -1243,12 +1169,9 @@
                             <div id="nameMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="space-y-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full
-                                        Name</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full Name</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-user"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-user"></i></span>
                                         <input type="text" id="settings-name"
                                             class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="Your full name">
@@ -1264,8 +1187,7 @@
                         <!-- Change Email -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
                                     <i class="fas fa-envelope"></i>
                                 </div>
                                 <div>
@@ -1276,30 +1198,22 @@
                             <div id="emailMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="space-y-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
-                                        Email</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New Email</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-envelope"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-envelope"></i></span>
                                         <input type="email" id="settings-email"
                                             class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="new@email.com">
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
-                                        Password (to confirm)</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current Password (to confirm)</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
                                         <input type="password" id="settings-email-pass"
                                             class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="••••••••">
-                                        <button type="button"
-                                            onclick="togglePasswordVisibility('settings-email-pass', 'eyeEmailPass')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" onclick="togglePasswordVisibility('settings-email-pass', 'eyeEmailPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <i id="eyeEmailPass" class="fas fa-eye"></i>
                                         </button>
                                     </div>
@@ -1314,8 +1228,7 @@
                         <!-- Change Password -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
+                                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
                                     <i class="fas fa-key"></i>
                                 </div>
                                 <div>
@@ -1326,59 +1239,43 @@
                             <div id="passMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
-                                        Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
                                         <input type="password" id="settings-current-pass"
                                             class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="••••••••">
-                                        <button type="button"
-                                            onclick="togglePasswordVisibility('settings-current-pass', 'eyeCurrentPass')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" onclick="togglePasswordVisibility('settings-current-pass', 'eyeCurrentPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <i id="eyeCurrentPass" class="fas fa-eye"></i>
                                         </button>
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
-                                        Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
                                         <input type="password" id="settings-new-pass"
                                             class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="••••••••">
-                                        <button type="button"
-                                            onclick="togglePasswordVisibility('settings-new-pass', 'eyeNewPass')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" onclick="togglePasswordVisibility('settings-new-pass', 'eyeNewPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <i id="eyeNewPass" class="fas fa-eye"></i>
                                         </button>
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Confirm
-                                        New Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Confirm New Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
                                         <input type="password" id="settings-confirm-pass"
                                             class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
                                             placeholder="••••••••">
-                                        <button type="button"
-                                            onclick="togglePasswordVisibility('settings-confirm-pass', 'eyeConfirmPass')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
+                                        <button type="button" onclick="togglePasswordVisibility('settings-confirm-pass', 'eyeConfirmPass')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600">
                                             <i id="eyeConfirmPass" class="fas fa-eye"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="changePassword()"
-                                class="mt-4 px-8 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition-all duration-200 flex items-center gap-2">
+                            <button onclick="changePassword()" class="mt-4 px-8 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition-all duration-200 flex items-center gap-2">
                                 <i class="fas fa-key"></i> Update Password
                             </button>
                         </div>
@@ -1442,44 +1339,48 @@
                     </div>
 
                     <div>
-                        <label class="block mb-2 font-medium text-industrial-gray">
+                        <label id="m-price-label" class="block mb-2 font-medium text-industrial-gray">
                             <i class="fas fa-money-bill-wave text-industrial-blue mr-2"></i>
-                            Price (ETB / hr) *
+                            Rental Price (ETB / hr) *
                         </label>
                         <div class="relative">
-                            <span
-                                class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">ETB</span>
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">ETB</span>
                             <input type="number" id="m-price" required min="1" step="1"
                                 class="w-full border-2 border-gray-200 pl-12 pr-4 py-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200"
                                 placeholder="e.g., 500">
+                        </div>
+                    </div>
+                    
+                    <div id="m-salePriceContainer" class="hidden">
+                        <label class="block mb-2 font-medium text-industrial-gray">
+                            <i class="fas fa-money-bill-wave text-industrial-blue mr-2"></i>
+                            Sale Price (ETB) *
+                        </label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">ETB</span>
+                            <input type="number" id="m-salePrice" min="1" step="1"
+                                class="w-full border-2 border-gray-200 pl-12 pr-4 py-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200"
+                                placeholder="e.g., 50000">
                         </div>
                     </div>
 
                     <div>
                         <label class="block mb-2 font-medium text-industrial-gray">
                             <i class="fas fa-tags text-industrial-blue mr-2"></i>
-                            Listing Type * <span class="text-xs font-normal text-gray-500 ml-1">(select one or
-                                both)</span>
+                            Listing Type * <span class="text-xs font-normal text-gray-500 ml-1">(select one or both)</span>
                         </label>
                         <div class="flex gap-4 mt-1">
-                            <label
-                                class="flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-yellow-50 border-2 border-gray-200 hover:border-industrial-yellow rounded-xl px-4 py-3 flex-1 transition-all">
-                                <input type="checkbox" id="m-listingRent" value="rent"
-                                    onchange="handleListingTypeChange()" class="w-4 h-4 accent-yellow-400">
-                                <span class="font-semibold text-sm"><i class="fas fa-clock mr-1 text-blue-500"></i> For
-                                    Rent</span>
+                            <label class="flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-yellow-50 border-2 border-gray-200 hover:border-industrial-yellow rounded-xl px-4 py-3 flex-1 transition-all">
+                                <input type="checkbox" id="m-listingRent" value="rent" onchange="handleListingTypeChange()" class="w-4 h-4 accent-yellow-400">
+                                <span class="font-semibold text-sm"><i class="fas fa-clock mr-1 text-blue-500"></i> For Rent</span>
                             </label>
-                            <label
-                                class="flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-yellow-50 border-2 border-gray-200 hover:border-industrial-yellow rounded-xl px-4 py-3 flex-1 transition-all">
-                                <input type="checkbox" id="m-listingSale" value="sale"
-                                    onchange="handleListingTypeChange()" class="w-4 h-4 accent-yellow-400">
-                                <span class="font-semibold text-sm"><i class="fas fa-tag mr-1 text-green-500"></i> For
-                                    Sale</span>
+                            <label class="flex items-center gap-2 cursor-pointer bg-gray-50 hover:bg-yellow-50 border-2 border-gray-200 hover:border-industrial-yellow rounded-xl px-4 py-3 flex-1 transition-all">
+                                <input type="checkbox" id="m-listingSale" value="sale" onchange="handleListingTypeChange()" class="w-4 h-4 accent-yellow-400">
+                                <span class="font-semibold text-sm"><i class="fas fa-tag mr-1 text-green-500"></i> For Sale</span>
                             </label>
                         </div>
                         <input type="hidden" id="m-listingType" value="rent">
-                        <p id="listingTypeError" class="hidden text-red-500 text-xs mt-1">Please select at least one
-                            listing type.</p>
+                        <p id="listingTypeError" class="hidden text-red-500 text-xs mt-1">Please select at least one listing type.</p>
                     </div>
 
                     <div>
@@ -1591,8 +1492,7 @@
 
                 <!-- Common Details Section -->
                 <div class="pt-6 border-t border-gray-200">
-                    <h4 class="font-heading font-bold text-lg mb-4 translate-content" data-i18n="common_details">Common
-                        Details</h4>
+                    <h4 class="font-heading font-bold text-lg mb-4 translate-content" data-i18n="common_details">Common Details</h4>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label class="block mb-2 font-medium text-industrial-gray">
@@ -1620,8 +1520,7 @@
                                 Delivery Price (ETB / km)
                             </label>
                             <div class="relative">
-                                <span
-                                    class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">ETB</span>
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 font-semibold text-sm">ETB</span>
                                 <input type="number" id="m-deliveryPricePerKm" min="0" step="1"
                                     class="w-full border-2 border-gray-200 pl-12 pr-4 py-3 rounded-xl focus:border-industrial-yellow focus:ring-2 focus:ring-industrial-yellow/30 focus:outline-none transition-all duration-200"
                                     placeholder="e.g., 25">
@@ -1743,20 +1642,6 @@
                     </div>
                 </div>
 
-                <!-- Price Intelligence Section -->
-                <div class="price-intelligence-card p-4 rounded-lg">
-                    <h4 class="font-bold mb-2 flex items-center">
-                        <i class="fas fa-lightbulb text-blue-500 mr-2"></i>
-                        <span class="translate-content" data-i18n="price_intelligence">Price Intelligence</span>
-                    </h4>
-                    <p class="text-sm text-gray-600">
-                        <span class="translate-content" data-i18n="similar_machines">Similar machines rent for</span>
-                        ETB <span id="similarPriceRange">3,000 - 5,000</span>
-                        <span class="translate-content" data-i18n="market_demand">per hour. Market demand:</span>
-                        <span id="marketDemand">High</span>.
-                    </p>
-                </div>
-
                 <!-- Form Actions -->
                 <div
                     class="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-6 border-t border-gray-200">
@@ -1829,8 +1714,9 @@
     </div>
 
     <!-- Email Notification Modal -->
-    <div id="emailModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50">
-        <div class="bg-white max-w-2xl w-full p-6 rounded-2xl">
+    <div id="emailModal" class="hidden fixed inset-0 bg-black/70 flex justify-center items-center p-4 z-50 modal-overlay"
+        onclick="closeModalOnOutsideClick(event, 'emailModal')">
+        <div class="bg-white max-w-2xl w-full p-6 rounded-2xl modal-content" onclick="event.stopPropagation()">
             <h3 class="text-xl font-bold mb-4 translate-content" data-i18n="email_notifications">Email Notifications
             </h3>
             <div class="space-y-4">
@@ -1991,17 +1877,17 @@
             const flag = lang === 'en' ? '🇺🇸' : '🇪🇹';
             const label = lang === 'en' ? 'EN' : 'አማ';
             // Update pill buttons
-            ['adminMobileLangFlag', 'adminDesktopLangFlag'].forEach(id => {
+            ['adminMobileLangFlag','adminDesktopLangFlag'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.textContent = flag;
             });
-            ['adminMobileLangLabel', 'adminDesktopLangLabel'].forEach(id => {
+            ['adminMobileLangLabel','adminDesktopLangLabel'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.textContent = label;
             });
             // Update active options
-            ['adminMobileOptEn', 'adminDesktopOptEn'].forEach(id => {
+            ['adminMobileOptEn','adminDesktopOptEn'].forEach(id => {
                 document.getElementById(id)?.classList.toggle('active', lang === 'en');
             });
-            ['adminMobileOptAm', 'adminDesktopOptAm'].forEach(id => {
+            ['adminMobileOptAm','adminDesktopOptAm'].forEach(id => {
                 document.getElementById(id)?.classList.toggle('active', lang === 'am');
             });
             // Close all dropdowns
@@ -2021,7 +1907,7 @@
             const chevron = document.getElementById('adminLangChevron');
             if (chevron) chevron.classList.remove('rotate-180');
         }
-
+        
 
         // ========== PASSWORD HELPERS ==========
         function togglePasswordVisibility(inputId, iconId) {
@@ -2645,9 +2531,6 @@
             // If editing, load machine data
             if (machineId) {
                 await loadMachineForEdit(machineId);
-            } else {
-                // Load price intelligence for new machine
-                updatePriceIntelligence();
             }
 
             // Trigger change events to set initial state
@@ -2696,6 +2579,9 @@
             const hiddenInput = document.getElementById('m-listingType');
             const rentalSection = document.getElementById('rentalTermsSection');
             const errorEl = document.getElementById('listingTypeError');
+            const salePriceContainer = document.getElementById('m-salePriceContainer');
+            const priceLabel = document.getElementById('m-price-label');
+            const salePriceInput = document.getElementById('m-salePrice');
 
             let value = '';
             if (rentChecked && saleChecked) value = 'both';
@@ -2705,10 +2591,25 @@
             if (hiddenInput) hiddenInput.value = value;
             if (errorEl) errorEl.classList.toggle('hidden', !!value);
 
-            // Show rental terms only when rent is selected
+            // Toggle Rental terms
             if (rentalSection) {
                 if (rentChecked) rentalSection.classList.remove('hidden');
                 else rentalSection.classList.add('hidden');
+            }
+
+            // Toggle Price Fields
+            if (value === 'both') {
+                priceLabel.innerHTML = '<i class="fas fa-money-bill-wave text-industrial-blue mr-2"></i>Rental Price (ETB / hr) *';
+                salePriceContainer.classList.remove('hidden');
+                salePriceInput.required = true;
+            } else if (value === 'sale') {
+                priceLabel.innerHTML = '<i class="fas fa-money-bill-wave text-industrial-blue mr-2"></i>Sale Price (ETB) *';
+                salePriceContainer.classList.add('hidden');
+                salePriceInput.required = false;
+            } else { // rent or empty
+                priceLabel.innerHTML = '<i class="fas fa-money-bill-wave text-industrial-blue mr-2"></i>Rental Price (ETB / hr) *';
+                salePriceContainer.classList.add('hidden');
+                salePriceInput.required = false;
             }
         }
 
@@ -2780,9 +2681,8 @@
 
                 // Add listener to listing type
                 document.getElementById('m-listingType').addEventListener('change', handleListingTypeChange);
+                
 
-                // Add listener to price for dynamic intelligence update
-                document.getElementById('m-price').addEventListener('input', updatePriceIntelligence);
 
                 newSelect.innerHTML = '<option value="">Select Category</option>';
 
@@ -2843,6 +2743,7 @@
                     document.getElementById('m-newCategory').required = false;
                 }
                 document.getElementById('m-price').value = machine.price;
+                document.getElementById('m-salePrice').value = machine.common_details?.sale_price || '';
                 // Set listing type checkboxes
                 const lt = machine.listing_type || 'rent';
                 const rentCb = document.getElementById('m-listingRent');
@@ -2918,8 +2819,6 @@
                     }
                 });
 
-                // Update price intelligence
-                updatePriceIntelligence();
 
             } catch (error) {
                 console.error('Error loading machine:', error);
@@ -2980,14 +2879,17 @@
         async function saveMachine(e) {
             e.preventDefault();
 
-            // Validate form
             const errors = [];
             const name = document.getElementById('m-name').value.trim();
             const price = document.getElementById('m-price').value;
+            const salePrice = document.getElementById('m-salePrice').value;
+            const listingType = document.getElementById('m-listingType').value;
 
             if (!name) errors.push('Machine name is required');
-            if (!price || parseFloat(price) <= 0) errors.push('Valid price is required');
-
+            if (!price || parseFloat(price) <= 0) errors.push('Valid primary price is required');
+            if (listingType === 'both' && (!salePrice || parseFloat(salePrice) <= 0)) {
+                errors.push('Valid sale price is required when listing for both');
+            }
             if (errors.length > 0) {
                 showFormErrors(errors);
                 return;
@@ -3045,6 +2947,7 @@
                     condition: document.getElementById('m-condition').value,
                     safety_notes: document.getElementById('m-safetyNotes').value,
                     common_details: {
+                        sale_price: salePrice ? parseFloat(salePrice) : null,
                         location: document.getElementById('m-location').value,
                         pickup_location: document.getElementById('m-pickupLocation').value,
                         delivery_price_per_km: deliveryKm ? parseFloat(deliveryKm) : null,
@@ -3225,29 +3128,6 @@
             }
         }
 
-        function updatePriceIntelligence() {
-            // Recalculate based on input price
-            const priceValue = parseFloat(document.getElementById('m-price').value);
-
-            if (isNaN(priceValue) || priceValue <= 0) {
-                // Default placeholder if no valid price entered
-                document.getElementById('similarPriceRange').textContent = '300 - 400';
-                document.getElementById('marketDemand').textContent = 'High';
-                return;
-            }
-
-            // Calculate range: -10% to +10%
-            const minPrice = Math.floor(priceValue * 0.9);
-            const maxPrice = Math.ceil(priceValue * 1.1);
-
-            // Determine market demand based on price context (simulated)
-            let demand = 'High';
-            if (priceValue > 1000) demand = 'Medium';
-            if (priceValue > 5000) demand = 'Low';
-
-            document.getElementById('similarPriceRange').textContent = `${minPrice} - ${maxPrice}`;
-            document.getElementById('marketDemand').textContent = demand;
-        }
 
         // ========== ORDER MANAGEMENT ==========
         async function renderOrders() {
@@ -4005,7 +3885,7 @@
         }
 
         function closeModalOnOutsideClick(event, modalId) {
-            if (event.target.classList.contains('modal-overlay')) {
+            if (event.target.classList.contains('modal-overlay') || event.target.id === modalId || event.target === event.currentTarget) {
                 const modal = document.getElementById(modalId);
                 if (modal) {
                     modal.classList.add('hidden');
@@ -4165,7 +4045,7 @@
         // Make functions available globally
         window.login = login;
         window.logout = logout;
-        window.showTab = function (tabName) {
+        window.showTab = function(tabName) {
             if (_origShowTab) _origShowTab(tabName);
             if (tabName === 'settings') {
                 const user = JSON.parse(localStorage.getItem('current_user') || '{}');
@@ -4219,7 +4099,8 @@
                 // Fetch total count
                 const { count } = await supabase
                     .from('machine_inquiries')
-                    .select('*', { count: 'exact', head: true });
+                    .select('*', { count: 'exact', head: true })
+                    .or(`status.eq.pending,accepted_by.eq.${currentUser.id}`);
 
                 const totalPages = Math.ceil((count || 0) / INQUIRIES_PER_PAGE);
                 const start = (inquiriesCurrentPage - 1) * INQUIRIES_PER_PAGE;
@@ -4229,6 +4110,7 @@
                 const { data: inquiries, error } = await supabase
                     .from('machine_inquiries')
                     .select('*')
+                    .or(`status.eq.pending,accepted_by.eq.${currentUser.id}`)
                     .order('created_at', { ascending: false })
                     .range(start, end);
 
@@ -4315,9 +4197,14 @@
 
         async function updateInquiryStatus(inquiryId, newStatus) {
             try {
+                const updateData = { 
+                    status: newStatus,
+                    accepted_by: currentUser.id
+                };
+
                 const { error } = await supabase
                     .from('machine_inquiries')
-                    .update({ status: newStatus })
+                    .update(updateData)
                     .eq('id', inquiryId);
 
                 if (error) throw error;

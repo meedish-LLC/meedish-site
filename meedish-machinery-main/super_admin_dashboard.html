@@ -303,82 +303,33 @@
         }
 
         /* ── Unified Language Switcher (Pill Dropdown) ── */
-        .admin-lang-switcher {
-            position: relative;
-            display: inline-block;
-        }
-
+        .admin-lang-switcher { position: relative; display: inline-block; }
         .lang-pill-btn {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 7px 12px;
-            background: white;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 999px;
-            cursor: pointer;
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            transition: all 0.2s;
-            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            display: flex; align-items: center; gap: 6px;
+            padding: 7px 12px; background: white;
+            border: 1.5px solid #e5e7eb; border-radius: 999px;
+            cursor: pointer; font-size: 13px; font-weight: 600; color: #374151;
+            transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,.06);
         }
-
-        .lang-pill-btn:hover {
-            border-color: #FFB347;
-            background: #fffbeb;
-        }
-
+        .lang-pill-btn:hover { border-color: #FFB347; background: #fffbeb; }
         .lang-pill-dropdown {
-            position: absolute;
-            top: calc(100% + 8px);
-            right: 0;
-            background: white;
-            border: 1.5px solid #e5e7eb;
-            border-radius: 14px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, .1);
-            min-width: 150px;
-            overflow: hidden;
-            display: none;
-            animation: fadeSlideDown .18s ease-out;
-            z-index: 200;
+            position: absolute; top: calc(100% + 8px); right: 0;
+            background: white; border: 1.5px solid #e5e7eb;
+            border-radius: 14px; box-shadow: 0 8px 24px rgba(0,0,0,.1);
+            min-width: 150px; overflow: hidden; display: none;
+            animation: fadeSlideDown .18s ease-out; z-index: 200;
         }
-
-        .lang-pill-dropdown.show {
-            display: block;
-        }
-
+        .lang-pill-dropdown.show { display: block; }
         .lang-pill-option {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 16px;
-            cursor: pointer;
-            font-size: 14px;
-            color: #374151;
-            transition: background .15s;
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 16px; cursor: pointer; font-size: 14px;
+            color: #374151; transition: background .15s;
         }
-
-        .lang-pill-option:hover {
-            background: #f9fafb;
-        }
-
-        .lang-pill-option.active {
-            background: #fffbeb;
-            color: #d97706;
-            font-weight: 700;
-        }
-
+        .lang-pill-option:hover { background: #f9fafb; }
+        .lang-pill-option.active { background: #fffbeb; color: #d97706; font-weight: 700; }
         @keyframes fadeSlideDown {
-            from {
-                opacity: 0;
-                transform: translateY(-6px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity:0; transform:translateY(-6px); }
+            to   { opacity:1; transform:translateY(0); }
         }
 
         .badge {
@@ -433,14 +384,13 @@
         <!-- Sidebar -->
         <aside class="hidden lg:flex w-72 bg-slate-900 text-white flex-col flex-shrink-0 z-20 shadow-2xl relative">
             <div class="h-20 flex items-center px-8 border-b border-slate-800 bg-slate-900">
-                <a href="index.html" title="Back to Home" class="flex items-center space-x-3">
-                    <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo"
-                        class="h-10 w-10 rounded-lg object-cover" />
-                    <div class="flex flex-col text-left justify-center">
-                        <span class="font-bold text-lg leading-none text-white">Meedish</span>
-                        <span class="font-bold text-lg leading-none text-yellow-500">Machinery</span>
-                    </div>
+                <a href="index.html" title="Back to Home">
+                    <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo" class="w-40 h-13 rounded-lg object-cover" />
                 </a>
+                <div class="flex flex-col text-left justify-center">
+                    <span class="font-extrabold text-lg md:text-xl leading-none text-gray-800">MEEDISH</span>
+                    <span class="font-bold text-lg md:text-xl leading-none text-yellow-500">MACHINERY</span>
+                </div>
             </div>
 
             <!-- Admin Profile -->
@@ -514,18 +464,14 @@
         </aside>
 
         <!-- Mobile Sidebar Overlay -->
-        <div id="mobileSidebar" class="lg:hidden fixed inset-0 z-50 hidden">
-            <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
+        <div id="mobileSidebar" class="lg:hidden fixed inset-0 z-50 hidden" onclick="toggleMobileMenu()">
+            <div class="absolute inset-0 bg-slate-900/90 backdrop-blur-sm"></div>
             <div
-                class="absolute left-0 top-0 h-full w-72 bg-slate-900 text-white shadow-2xl flex flex-col border-r border-slate-800">
+                class="absolute left-0 top-0 h-full w-72 bg-slate-900 text-white shadow-2xl flex flex-col border-r border-slate-800"
+                onclick="event.stopPropagation()">
                 <div class="h-20 flex items-center px-6 border-b border-slate-800">
-                    <a href="index.html" title="Back to Home" class="flex items-center space-x-2">
-                        <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo"
-                            class="h-10 w-10 rounded-lg object-cover" />
-                        <div class="flex flex-col text-left justify-center">
-                            <span class="font-bold text-base leading-none text-white">Meedish</span>
-                            <span class="font-bold text-base leading-none text-yellow-500">Machinery</span>
-                        </div>
+                    <a href="index.html" title="Back to Home">
+                        <img src="logo/machinerylogo.png" alt="Meedish Machinery Logo" class="w-32 h-13 rounded-lg object-cover" />
                     </a>
                     <button onclick="toggleMobileMenu()"
                         class="ml-auto w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-slate-400 hover:text-white"><i
@@ -597,19 +543,11 @@
                         <button class="lang-pill-btn" onclick="toggleSALangDropdown('saMobileLangDD')">
                             <span id="saMobileFlag">🇺🇸</span>
                             <span id="saMobileLabel">EN</span>
-                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div class="lang-pill-dropdown" id="saMobileLangDD">
-                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saMobileOptEn">
-                                <span>🇺🇸</span> English
-                            </div>
-                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saMobileOptAm">
-                                <span>🇪🇹</span> አማርኛ
-                            </div>
+                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saMobileOptEn"><span>🇺🇸</span> English</div>
+                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saMobileOptAm"><span>🇪🇹</span> አማርኛ</div>
                         </div>
                     </div>
 
@@ -637,19 +575,11 @@
                         <button class="lang-pill-btn" onclick="toggleSALangDropdown('saDesktopLangDD')">
                             <span id="saDesktopFlag">🇺🇸</span>
                             <span id="saDesktopLabel">EN</span>
-                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                    d="M19 9l-7 7-7-7" />
-                            </svg>
+                            <svg class="w-3 h-3 text-gray-400 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/></svg>
                         </button>
                         <div class="lang-pill-dropdown" id="saDesktopLangDD">
-                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saDesktopOptEn">
-                                <span>🇺🇸</span> English
-                            </div>
-                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saDesktopOptAm">
-                                <span>🇪🇹</span> አማርኛ
-                            </div>
+                            <div class="lang-pill-option active" onclick="switchLanguage('en')" id="saDesktopOptEn"><span>🇺🇸</span> English</div>
+                            <div class="lang-pill-option" onclick="switchLanguage('am')" id="saDesktopOptAm"><span>🇪🇹</span> አማርኛ</div>
                         </div>
                     </div>
 
@@ -1007,31 +937,19 @@
                         <!-- Change Name -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow">
-                                    <i class="fas fa-user"></i>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-900">Display Name</h3>
-                                    <p class="text-xs text-gray-500">Update your admin name</p>
-                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-industrial-yellow/10 flex items-center justify-center text-industrial-yellow"><i class="fas fa-user"></i></div>
+                                <div><h3 class="font-bold text-gray-900">Display Name</h3><p class="text-xs text-gray-500">Update your admin name</p></div>
                             </div>
                             <div id="sa-nameMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="space-y-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full
-                                        Name</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Full Name</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-user"></i></span>
-                                        <input type="text" id="sa-settings-name"
-                                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="Super Admin">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-user"></i></span>
+                                        <input type="text" id="sa-settings-name" class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="Super Admin">
                                     </div>
                                 </div>
-                                <button onclick="saUpdateName()"
-                                    class="w-full py-3 rounded-xl bg-industrial-yellow hover:bg-yellow-400 text-gray-900 font-bold transition-all flex items-center justify-center gap-2">
+                                <button onclick="saUpdateName()" class="w-full py-3 rounded-xl bg-industrial-yellow hover:bg-yellow-400 text-gray-900 font-bold transition-all flex items-center justify-center gap-2">
                                     <i class="fas fa-save"></i> Save Name
                                 </button>
                             </div>
@@ -1040,46 +958,27 @@
                         <!-- Change Email -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500">
-                                    <i class="fas fa-envelope"></i>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-900">Change Email</h3>
-                                    <p class="text-xs text-gray-500">Update your login email</p>
-                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500"><i class="fas fa-envelope"></i></div>
+                                <div><h3 class="font-bold text-gray-900">Change Email</h3><p class="text-xs text-gray-500">Update your login email</p></div>
                             </div>
                             <div id="sa-emailMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="space-y-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
-                                        Email</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New Email</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-envelope"></i></span>
-                                        <input type="email" id="sa-settings-email"
-                                            class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="new@email.com">
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-envelope"></i></span>
+                                        <input type="email" id="sa-settings-email" class="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="new@email.com">
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
-                                        Password (confirm)</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current Password (confirm)</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
-                                        <input type="password" id="sa-email-pass"
-                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="••••••••">
-                                        <button type="button" onclick="saTogglePass('sa-email-pass','saEyeEmail')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
-                                                id="saEyeEmail" class="fas fa-eye"></i></button>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-email-pass" class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-email-pass','saEyeEmail')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i id="saEyeEmail" class="fas fa-eye"></i></button>
                                     </div>
                                 </div>
-                                <button onclick="saChangeEmail()"
-                                    class="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2">
+                                <button onclick="saChangeEmail()" class="w-full py-3 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold transition-all flex items-center justify-center gap-2">
                                     <i class="fas fa-envelope"></i> Update Email
                                 </button>
                             </div>
@@ -1088,65 +987,37 @@
                         <!-- Change Password -->
                         <div class="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm lg:col-span-2">
                             <div class="flex items-center gap-3 mb-6">
-                                <div
-                                    class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500">
-                                    <i class="fas fa-key"></i>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-gray-900">Change Password</h3>
-                                    <p class="text-xs text-gray-500">Minimum 6 characters</p>
-                                </div>
+                                <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center text-green-500"><i class="fas fa-key"></i></div>
+                                <div><h3 class="font-bold text-gray-900">Change Password</h3><p class="text-xs text-gray-500">Minimum 6 characters</p></div>
                             </div>
                             <div id="sa-passMsg" class="hidden mb-4 p-3 rounded-xl text-sm font-medium"></div>
                             <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current
-                                        Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Current Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
-                                        <input type="password" id="sa-current-pass"
-                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="••••••••">
-                                        <button type="button" onclick="saTogglePass('sa-current-pass','saEyeCurrent')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
-                                                id="saEyeCurrent" class="fas fa-eye"></i></button>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-current-pass" class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-current-pass','saEyeCurrent')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i id="saEyeCurrent" class="fas fa-eye"></i></button>
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New
-                                        Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">New Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
-                                        <input type="password" id="sa-new-pass"
-                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="••••••••">
-                                        <button type="button" onclick="saTogglePass('sa-new-pass','saEyeNew')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
-                                                id="saEyeNew" class="fas fa-eye"></i></button>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-new-pass" class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-new-pass','saEyeNew')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i id="saEyeNew" class="fas fa-eye"></i></button>
                                     </div>
                                 </div>
                                 <div>
-                                    <label
-                                        class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Confirm
-                                        Password</label>
+                                    <label class="text-xs font-bold text-gray-500 uppercase tracking-wider block mb-1.5">Confirm Password</label>
                                     <div class="relative">
-                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i
-                                                class="fas fa-lock"></i></span>
-                                        <input type="password" id="sa-confirm-pass"
-                                            class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all"
-                                            placeholder="••••••••">
-                                        <button type="button" onclick="saTogglePass('sa-confirm-pass','saEyeConfirm')"
-                                            class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i
-                                                id="saEyeConfirm" class="fas fa-eye"></i></button>
+                                        <span class="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"><i class="fas fa-lock"></i></span>
+                                        <input type="password" id="sa-confirm-pass" class="w-full pl-10 pr-10 py-3 rounded-xl border border-gray-200 bg-gray-50 focus:bg-white focus:border-industrial-yellow focus:ring-4 focus:ring-industrial-yellow/10 outline-none transition-all" placeholder="••••••••">
+                                        <button type="button" onclick="saTogglePass('sa-confirm-pass','saEyeConfirm')" class="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"><i id="saEyeConfirm" class="fas fa-eye"></i></button>
                                     </div>
                                 </div>
                             </div>
-                            <button onclick="saChangePassword()"
-                                class="mt-4 px-8 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition-all flex items-center gap-2">
+                            <button onclick="saChangePassword()" class="mt-4 px-8 py-3 rounded-xl bg-green-500 hover:bg-green-600 text-white font-bold transition-all flex items-center gap-2">
                                 <i class="fas fa-key"></i> Update Password
                             </button>
                         </div>
@@ -1321,17 +1192,17 @@
         function updateLangDropdowns(lang) {
             const flag = lang === 'en' ? '🇺🇸' : '🇪🇹';
             const label = lang === 'en' ? 'EN' : 'አማ';
-            ['saMobileFlag', 'saDesktopFlag', 'saSidebarFlag'].forEach(id => {
+            ['saMobileFlag','saDesktopFlag','saSidebarFlag'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.textContent = flag;
             });
-            ['saMobileLabel', 'saDesktopLabel', 'saSidebarLabel'].forEach(id => {
+            ['saMobileLabel','saDesktopLabel','saSidebarLabel'].forEach(id => {
                 const el = document.getElementById(id); if (el) el.textContent = label;
             });
             // Active state
-            ['saMobileOptEn', 'saDesktopOptEn', 'saSidebarOptEn'].forEach(id => {
+            ['saMobileOptEn','saDesktopOptEn','saSidebarOptEn'].forEach(id => {
                 document.getElementById(id)?.classList.toggle('active', lang === 'en');
             });
-            ['saMobileOptAm', 'saDesktopOptAm', 'saSidebarOptAm'].forEach(id => {
+            ['saMobileOptAm','saDesktopOptAm','saSidebarOptAm'].forEach(id => {
                 document.getElementById(id)?.classList.toggle('active', lang === 'am');
             });
             document.querySelectorAll('.lang-pill-dropdown').forEach(d => d.classList.remove('show'));
@@ -1585,13 +1456,13 @@
                 const { count: rentalMachines, error: rentalError } = await supabase
                     .from('machines')
                     .select('*', { count: 'exact', head: true })
-                    .eq('listing_type', 'rent');
+                    .in('listing_type', ['rent', 'both']);
 
                 // Get sale machines
                 const { count: saleMachines, error: saleError } = await supabase
                     .from('machines')
                     .select('*', { count: 'exact', head: true })
-                    .eq('listing_type', 'sale');
+                    .in('listing_type', ['sale', 'both']);
 
                 // Get active orders
                 const { count: activeOrders, error: ordersError } = await supabase
@@ -2856,7 +2727,7 @@
         }
 
         function closeModalOnOutsideClick(event, modalId) {
-            if (event.target.classList.contains('modal-overlay')) {
+            if (event.target.classList.contains('modal-overlay') || event.target.id === modalId || event.target === event.currentTarget) {
                 const modal = document.getElementById(modalId);
                 if (modal) {
                     modal.classList.add('hidden');
@@ -2971,53 +2842,53 @@
         function saTogglePass(inputId, iconId) {
             const el = document.getElementById(inputId);
             const icon = document.getElementById(iconId);
-            if (el.type === 'password') { el.type = 'text'; icon.classList.replace('fa-eye', 'fa-eye-slash'); }
-            else { el.type = 'password'; icon.classList.replace('fa-eye-slash', 'fa-eye'); }
+            if (el.type === 'password') { el.type = 'text'; icon.classList.replace('fa-eye','fa-eye-slash'); }
+            else { el.type = 'password'; icon.classList.replace('fa-eye-slash','fa-eye'); }
         }
         async function saUpdateName() {
             const name = document.getElementById('sa-settings-name').value.trim();
-            if (!name) { saFeedback('sa-nameMsg', 'Please enter a name.', false); return; }
+            if (!name) { saFeedback('sa-nameMsg','Please enter a name.',false); return; }
             const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
-            if (!user.id) { saFeedback('sa-nameMsg', 'Not logged in.', false); return; }
+            if (!user.id) { saFeedback('sa-nameMsg','Not logged in.',false); return; }
             const { error } = await window.supabase.from('users').update({ full_name: name }).eq('id', user.id);
-            if (error) { saFeedback('sa-nameMsg', 'Error: ' + error.message, false); return; }
+            if (error) { saFeedback('sa-nameMsg','Error: '+error.message,false); return; }
             user.full_name = name; localStorage.setItem('super_admin_user', JSON.stringify(user));
-            saFeedback('sa-nameMsg', '✓ Name updated!', true);
+            saFeedback('sa-nameMsg','✓ Name updated!',true);
         }
         async function saChangeEmail() {
             const newEmail = document.getElementById('sa-settings-email').value.trim();
             const pass = document.getElementById('sa-email-pass').value;
-            if (!newEmail || !pass) { saFeedback('sa-emailMsg', 'Please fill in all fields.', false); return; }
+            if (!newEmail||!pass) { saFeedback('sa-emailMsg','Please fill in all fields.',false); return; }
             const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
-            if (!user.id) { saFeedback('sa-emailMsg', 'Not logged in.', false); return; }
-            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id', user.id).eq('password', pass).single();
-            if (ce || !check) { saFeedback('sa-emailMsg', '✗ Current password is incorrect.', false); return; }
-            const { data: ex } = await window.supabase.from('users').select('id').eq('email', newEmail).single();
-            if (ex) { saFeedback('sa-emailMsg', '✗ Email already in use.', false); return; }
+            if (!user.id) { saFeedback('sa-emailMsg','Not logged in.',false); return; }
+            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id',user.id).eq('password',pass).single();
+            if (ce||!check) { saFeedback('sa-emailMsg','✗ Current password is incorrect.',false); return; }
+            const { data: ex } = await window.supabase.from('users').select('id').eq('email',newEmail).single();
+            if (ex) { saFeedback('sa-emailMsg','✗ Email already in use.',false); return; }
             const { error } = await window.supabase.from('users').update({ email: newEmail }).eq('id', user.id);
-            if (error) { saFeedback('sa-emailMsg', 'Error: ' + error.message, false); return; }
+            if (error) { saFeedback('sa-emailMsg','Error: '+error.message,false); return; }
             user.email = newEmail; localStorage.setItem('super_admin_user', JSON.stringify(user));
             document.getElementById('sa-settings-email').value = '';
             document.getElementById('sa-email-pass').value = '';
-            saFeedback('sa-emailMsg', '✓ Email updated! Use new email next login.', true);
+            saFeedback('sa-emailMsg','✓ Email updated! Use new email next login.',true);
         }
         async function saChangePassword() {
             const cur = document.getElementById('sa-current-pass').value;
             const np = document.getElementById('sa-new-pass').value;
             const cp = document.getElementById('sa-confirm-pass').value;
-            if (!cur || !np || !cp) { saFeedback('sa-passMsg', 'Please fill in all fields.', false); return; }
-            if (np.length < 6) { saFeedback('sa-passMsg', '✗ New password must be at least 6 characters.', false); return; }
-            if (np !== cp) { saFeedback('sa-passMsg', '✗ Passwords do not match.', false); return; }
+            if (!cur||!np||!cp) { saFeedback('sa-passMsg','Please fill in all fields.',false); return; }
+            if (np.length<6) { saFeedback('sa-passMsg','✗ New password must be at least 6 characters.',false); return; }
+            if (np!==cp) { saFeedback('sa-passMsg','✗ Passwords do not match.',false); return; }
             const user = JSON.parse(localStorage.getItem('super_admin_user') || '{}');
-            if (!user.id) { saFeedback('sa-passMsg', 'Not logged in.', false); return; }
-            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id', user.id).eq('password', cur).single();
-            if (ce || !check) { saFeedback('sa-passMsg', '✗ Current password is incorrect.', false); return; }
+            if (!user.id) { saFeedback('sa-passMsg','Not logged in.',false); return; }
+            const { data: check, error: ce } = await window.supabase.from('users').select('id').eq('id',user.id).eq('password',cur).single();
+            if (ce||!check) { saFeedback('sa-passMsg','✗ Current password is incorrect.',false); return; }
             const { error } = await window.supabase.from('users').update({ password: np }).eq('id', user.id);
-            if (error) { saFeedback('sa-passMsg', 'Error: ' + error.message, false); return; }
-            document.getElementById('sa-current-pass').value = '';
-            document.getElementById('sa-new-pass').value = '';
-            document.getElementById('sa-confirm-pass').value = '';
-            saFeedback('sa-passMsg', '✓ Password changed successfully!', true);
+            if (error) { saFeedback('sa-passMsg','Error: '+error.message,false); return; }
+            document.getElementById('sa-current-pass').value='';
+            document.getElementById('sa-new-pass').value='';
+            document.getElementById('sa-confirm-pass').value='';
+            saFeedback('sa-passMsg','✓ Password changed successfully!',true);
         }
 
         // Make functions available globally
